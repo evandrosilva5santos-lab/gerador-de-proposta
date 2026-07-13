@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="proposta.css">
+<script src="image-slot.js"></script>
+</head>
+<body>
+
+<div class="topbar" data-screen-label="Topo">
+  Data de Envio: <b data-f="dataEnvio">24/07/2024</b> &nbsp;|&nbsp; Proposta válida por <span class="hot" data-f="validadeLabel">7 dias</span> a partir da data de envio
+</div>
+
+<!-- HERO -->
+<section class="hero" data-screen-label="Hero">
+  <div class="hero-bg"><image-slot id="hero-bg" shape="rect" placeholder="Arraste sua foto de fundo (1920×900)"></image-slot></div>
+  <div class="wrap hero-inner">
+    <div></div>
+    <div class="hero-copy">
+      <h1><span class="l1">Olá,</span><span class="l2">"<span data-f="cliente">Cliente</span>"</span></h1>
+      <p>Aqui você vai conhecer um pouco do meu trabalho e as informações para o seu projeto, como prazo, formas de pagamento e o valor do investimento.</p>
+      <a class="btn-hot" href="#portfolio">Ver as informações ↓</a>
+    </div>
+  </div>
+</section>
+<div class="wrap hero-stats" id="statsBar"></div>
+
+<!-- PORTFOLIO -->
+<section class="section" id="portfolio" data-screen-label="Portfólio">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">Portfólio</span>
+      <h2 class="h2">Mas antes de ver o preço para o seu projeto, deixa eu te mostrar o valor do meu trabalho.</h2>
+      <p class="sub">Essas são apenas algumas das dezenas de páginas que eu já fiz, caso queira ver mais acesse <a data-f-href="portfolioLink" data-f="portfolioLinkLabel" href="#">meu portfólio</a>.</p>
+    </div>
+    <div class="pf-grid" id="pfGrid"></div>
+    <div class="center-cta"><a class="btn-hot" href="#investimento">Ótimo, quero fechar com você ↓</a></div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="section" data-screen-label="Depoimentos">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">Depoimentos</span>
+      <h2 class="h2">Alguns dos depoimentos dos meus clientes ao entregar os projetos</h2>
+    </div>
+    <div class="dep-grid" id="depGrid"></div>
+  </div>
+</section>
+
+<!-- SOBRE MIM -->
+<section class="section" data-screen-label="Quem sou eu">
+  <div class="wrap about">
+    <div class="about-photo">
+      <image-slot id="about-photo" shape="rect" placeholder="Arraste sua foto"></image-slot>
+      <div class="about-badge" id="aboutBadge"></div>
+    </div>
+    <div class="about-txt">
+      <span class="tag">Quem sou eu?</span>
+      <h2 class="h2">Conheça um pouco de quem vai estar responsável pelo seu projeto.</h2>
+      <p data-f="sobreMim"></p>
+      <div class="players" id="playersBlock">
+        <p style="color:var(--txt-mute);font-size:14px">Alguns dos grandes players que já trabalhei e trabalho até hoje.</p>
+        <div class="player-chips" id="playerChips"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ETAPAS -->
+<section class="section" data-screen-label="Processo de criação">
+  <div class="wrap process">
+    <div class="process-left">
+      <span class="tag">Etapas do processo</span>
+      <h2 class="h2">Entenda um pouco do processo de criação</h2>
+      <div class="line"></div>
+    </div>
+    <div id="stepsCol"></div>
+  </div>
+</section>
+
+<!-- PAINEL CLARO + INVESTIMENTO -->
+<section class="panel" data-screen-label="Informações da proposta">
+  <div class="wrap">
+    <div class="panel-head">
+      <h2>Informações sobre a proposta</h2>
+      <span class="avisos">Avisos</span>
+    </div>
+    <div id="infoCards"></div>
+
+    <div class="invest" id="investimento" data-screen-label="Investimento">
+      <span class="tag">Investimento</span>
+      <p class="lead">Esse seria o preço de cada um dos serviços individualmente, mas considerando o pacote, fica assim:</p>
+      <table class="svc-table"><tbody id="svcRows"></tbody></table>
+      <div class="price-de">De <s>R$ <span data-f="precoDe">2.800</span></s> por</div>
+      <div class="price-big">R$ <span data-f="precoPor">2.500</span><small>,00</small></div>
+      <div class="valid-note">Essa proposta com esse valor é válida por <span data-f="validadeLabel2">7 dias</span></div>
+      <div class="countdown" id="countdown"></div>
+      <a class="btn-hot" data-f-href="ctaLink" href="#">Garantir essa oferta</a>
+      <div class="doubt">Ainda ficou com alguma dúvida? <a data-f-href="duvidaLink" href="#">Clique aqui</a></div>
+    </div>
+
+    <footer data-screen-label="Footer">
+      <div class="foot">
+        <div><span data-f="empresa">SUA EMPRESA LTDA</span><br><span data-f="cnpj">CNPJ: 00.000.000/0000-00</span></div>
+        <div class="mid" data-f="marca">@seuuser</div>
+        <div style="text-align:right">© <span data-f="ano">2026</span> Todos os direitos reservados<br>Criado por <span data-f="criador">@seuuser</span></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<script src="proposta-render.js"></script>
+</body>
+</html>

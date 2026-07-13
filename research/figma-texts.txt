@@ -1,0 +1,29 @@
+[/Proposta Comercial - Web Designer/Dobras/Portfólio/Frame 1171275312/Tag] "Portfólio" Inter Medium 13.453125px grad:#ff7a00>#ff00f5
+[/Proposta Comercial - Web Designer/Dobras/Portfólio/Frame 1171275312] "Mas antes de ver o Preço para o seu projeto, deixa eu te mostrar o valor do meu trabalho." TacticSans-Med Regular 32px #ffffff
+[/Proposta Comercial - Web Designer/Dobras/Portfólio/Frame 1171275312] "Essas são apenas algumas das dezenas de páginas que eu já fiz, caso queria ver mais acesse" Chakra Petch Regular 16px #d9e9f2
+[/Proposta Comercial - Web Designer/Dobras/Portfólio/BUTTON] "ótimo, quero fechar com você" Space Grotesk SemiBold 16px #ffffff
+[/Proposta Comercial - Web Designer/Dobras/Depoimentos/Frame 1171275312/Background] "Depoimentos" Chakra Petch Medium 13.453125px grad:#ff7a00>#ff00f5
+[/Proposta Comercial - Web Designer/Dobras/Depoimentos/Frame 1171275312] "Alguns dos depoimentos dos meus clientes aos entregar os projetos" TacticSans-Med Regular 40px #f8f8f8
+[/Proposta Comercial - Web Designer/Dobras/Sobre Mim/div.elementor-element/Background] "Quem sou eu?" Chakra Petch Medium 13.453125px grad:#ff7a00>#ff00f5
+[/Proposta Comercial - Web Designer/Dobras/Sobre Mim/div.elementor-element] "Conheça um pouco de
+quem vai está responsável pelo seu projeto." TacticSans-Med Regular 32px #f1fcff
+[/Proposta Comercial - Web Designer/Dobras/Sobre Mim/div.elementor-element] "Meu nome é o Washington Melo, mas conhecido como Tom e trabalho como designer a mais de 4 " undefined undefined 14px ?
+[/Proposta Comercial - Web Designer/Dobras/Sobre Mim/div.elementor-element] "Alguns dos grandes players que já trabalhei e trabalho até hoje." Chakra Petch Regular 14px #b8cce8
+[/Proposta Comercial - Web Designer/Dobras/04/Frame 1171275313/Background] "Etapas do Processo" Chakra Petch Medium 13.453125px grad:#ff7a00>#ff00f5
+[/Proposta Comercial - Web Designer/Dobras/04/Frame 1171275313] "Entenda um
+pouco do processo de Criação" TacticSans-Med Regular 40px #f1fcff
+[/Proposta Comercial - Web Designer/Dobras/Content/Frame 1171275314] "informações sobre a Proposta" Chakra Petch Bold 40px #070a10
+[/Proposta Comercial - Web Designer/Dobras/Content/Frame 1171275314/Tag Master] "Avisos" Chakra Petch SemiBold 16px #4b5563
+[/Proposta Comercial - Web Designer/Dobras/Content/Info/Card] "O prazo de entrega de uma página é de no máximo 4 Dias, podendo ser entregueantes depende" undefined undefined 16px #4b5563
+[/Proposta Comercial - Web Designer/Dobras/Content/Info/Card] "A partir do pagamento de 50% do valor começamos o projeto e depois que o serviço for entre" Chakra Petch Regular 16px #4b5563
+[/Proposta Comercial - Web Designer/Dobras/Content/Info/Card] "Você pode pagar através do boleto, pix ou transferência bancária. E se preferir você pode " undefined undefined 16px #4b5563
+[/Proposta Comercial - Web Designer/Dobras/Content/Frame 37/Frame 1171275312] "Investimento" TacticSans-Med Regular 24px grad:#ff7a00>#ff00f5
+[/Proposta Comercial - Web Designer/Dobras/Content/Frame 37/Frame 1171275312] "Esse seria o Preço de cada um dos serviços individualmente, mas considerando o pacote, fic" Chakra Petch Regular 16px #d9e9f2
+[/Proposta Comercial - Web Designer/Dobras/Content/Frame 37/Price] "De R$ 2800 Por" Space Grotesk Regular 14px ?
+[/Proposta Comercial - Web Designer/Dobras/Content/Frame 37/Price] "Essa Proposta com esse valor é valida por 7 Dias" Space Grotesk Regular 14px #ffffff
+[/Proposta Comercial - Web Designer/Dobras/Content/Frame 37/Frame 1171275313] "Ainda Ficou com alguma dúvida? Clique aqui" Space Grotesk Regular 14px ?
+[/Proposta Comercial - Web Designer/Dobras/Content/div.common_footer_bottom/Frame 1171275313] "UPWARD CREATIVE ACADEMY LTDA" Chakra Petch Regular 9.772072792053223px #ffffff
+[/Proposta Comercial - Web Designer/Dobras/Content/div.common_footer_bottom/Frame 1171275313] "CNPJ: 41.911.178/0001-71" Chakra Petch Regular 9.772072792053223px ?
+[/Proposta Comercial - Web Designer/Dobras/Content/div.common_footer_bottom/Frame 1171275314] "Criado por @tommello.edit" Chakra Petch Regular 9.772072792053223px #ffffff
+[/Proposta Comercial - Web Designer/Dobras/Content/div.common_footer_bottom/Frame 1171275314] "© 2024 Todos os direitos reservados" Chakra Petch Regular 12px #ffffff
+[/Proposta Comercial - Web Designer/Dobras/Content/div.common_footer_bottom/Frame 1171275314] "Políticas de Privacidade e Termos de Uso" Chakra Petch Regular 12px #ffffff
