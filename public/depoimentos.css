@@ -1,0 +1,15 @@
+/* Depoimentos — componente estilo WhatsApp (masonry real por colunas), usado em LP/site.
+   2 colunas: prints verticais de WhatsApp têm alturas muito desiguais e o balanceamento
+   do navegador deixaria a 3ª coluna vazia. */
+.dep-masonry{column-count:2;column-gap:16px;max-width:760px;margin:0 auto}
+.dep-masonry .dep-card{break-inside:avoid;page-break-inside:avoid;-webkit-column-break-inside:avoid;display:inline-flex;width:100%;flex-direction:column;gap:12px;margin:0 0 16px;background:var(--card);border:1px solid var(--stroke);border-radius:var(--card-radius);padding:14px}
+.dep-masonry .dep-shot{border-radius:8px;overflow:hidden;background:var(--bg-2);border:1px solid var(--stroke)}
+.dep-masonry .dep-shot img{width:100%;display:block}
+.dep-who{display:flex;align-items:center;gap:10px;padding:2px 2px 4px}
+.dep-who .av{width:38px;height:38px;border-radius:50%;overflow:hidden;flex:none;background:var(--bg-2);border:1px solid var(--stroke)}
+.dep-who .av img{width:100%;height:100%;object-fit:cover}
+.dep-who .nm{font-family:var(--f-ui);font-weight:600;font-size:14px;color:var(--head);line-height:1.2}
+.dep-who .hd{font-size:12px;color:var(--txt-mute)}
+@media screen and (min-width:1280px){.dep-masonry{column-count:3;max-width:1140px}}
+@media (max-width:560px){.dep-masonry{column-count:1;max-width:420px}}
+@media print{.dep-masonry{column-count:2;max-width:760px}}

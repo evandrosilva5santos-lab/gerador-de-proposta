@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta Comercial — START INC.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Rubik:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="proposta-start.css">
+<link rel="stylesheet" href="depoimentos.css">
+<script src="image-slot.js"></script>
+<script src="plataforma/imgstore.js"></script>
+</head>
+<body>
+
+<div id="gate" class="gate" style="display:none">
+  <div class="gate-card">
+    <img src="assets/logos/start-inc-negative-white.png" alt="START INC.">
+    <h2 id="gateTitle">Proposta protegida</h2>
+    <p id="gateMsg">Digite a senha que você recebeu junto com o link.</p>
+    <div id="gateForm">
+      <input id="gatePwd" type="password" placeholder="Senha">
+      <button class="btn-hot" style="width:100%;justify-content:center" onclick="checkPwd()">Acessar proposta</button>
+    </div>
+  </div>
+</div>
+
+<div id="page" style="display:none">
+  <div class="topbar" data-screen-label="Topo">
+    Proposta <b id="tCodigo"></b> · enviada em <b id="tData"></b> · válida por <span class="hot" id="tValidade"></span>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" data-screen-label="Capa">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="wrap hero-inner">
+      <div></div>
+      <div class="hero-copy">
+        <img class="hero-logo" src="assets/logos/start-inc-negative-white.png" alt="START INC.">
+        <div class="kicker">Proposta comercial</div>
+        <h1><span class="l1">Olá,</span><span class="l2">"<span id="hCliente">Cliente</span>"</span></h1>
+        <p id="hIntro">Preparamos esta proposta com os serviços, entregáveis, bonificações e condições pensados para o seu momento. Role para ver tudo.</p>
+        <div class="hero-author" id="hAuthor" style="display:none"></div>
+        <a class="btn-hot" href="#escopo">Ver as informações ↓</a>
+      </div>
+    </div>
+    <div class="wrap hero-stats" id="statsBar"></div>
+  </section>
+
+  <!-- OBJETIVO -->
+  <section class="section" id="objSec" data-screen-label="Objetivo">
+    <div class="wrap">
+      <div class="objetivo">
+        <span class="tag">Objetivo</span>
+        <h2 class="h2">O que vamos construir juntos</h2>
+        <p id="objTexto"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESCOPO -->
+  <section class="section alt" id="escopo" data-screen-label="Escopo">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">Escopo</span>
+        <h2 class="h2">Os serviços incluídos na sua proposta</h2>
+        <p class="sub">Cada bloco detalha exatamente o que será entregue.</p>
+      </div>
+      <div id="svcList"></div>
+    </div>
+  </section>
+
+  <!-- BONIFICAÇÕES -->
+  <section class="section" id="bonusSec" data-screen-label="Bonificações">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">Bonificações</span>
+        <h2 class="h2">Você está recebendo gratuitamente</h2>
+      </div>
+      <div class="bonus-grid" id="bonusGrid"></div>
+      <div class="bonus-total"><span>Total em benefícios inclusos sem custo</span><b id="bonusTotal"></b></div>
+    </div>
+  </section>
+
+  <!-- DEPOIMENTOS -->
+  <section class="section alt" data-screen-label="Depoimentos">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">Depoimentos</span>
+        <h2 class="h2">O que dizem quem já cresceu com a Start</h2>
+      </div>
+      <div class="dep-masonry" id="depGrid"></div>
+    </div>
+  </section>
+
+  <!-- SOBRE A START -->
+  <section class="section" data-screen-label="Quem somos">
+    <div class="wrap about">
+      <div class="about-photo">
+        <image-slot id="about-photo" shape="rect" placeholder="Arraste uma foto da equipe/CEO"></image-slot>
+        <div class="about-badge">
+          <div><b>+250</b> clientes atendidos</div>
+          <div>clientes em mais de <b>5 países</b></div>
+          <div><b>+4 anos</b> de mercado</div>
+        </div>
+      </div>
+      <div class="about-txt">
+        <span class="tag">Quem somos</span>
+        <h2 class="h2">Conheça quem vai estar responsável pelo seu projeto.</h2>
+        <p>A START INC. é uma empresa de Growth, Marketing e IA que ajuda negócios a escalarem com estratégias digitais de alta performance. Desenhamos ecossistemas completos — mídia paga, sites, landing pages, CRM, automações e IA — para gerar aquisição de clientes previsível e crescimento sustentável.
+
+Não trabalhamos com achismo: cada decisão é orientada por dados e pensada para converter.</p>
+        <p style="color:var(--txt-mute);font-size:14px;margin-bottom:0">Atendemos clínicas, escritórios, negócios locais e empresas B2B que querem escalar com marketing e tecnologia.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESSO -->
+  <section class="section alt" data-screen-label="Processo">
+    <div class="wrap process">
+      <div class="process-left">
+        <span class="tag">Etapas do processo</span>
+        <h2 class="h2">Entenda como o seu projeto sai do papel</h2>
+        <div class="line"></div>
+      </div>
+      <div id="stepsCol"></div>
+    </div>
+  </section>
+
+  <!-- PAINEL: INFORMAÇÕES + INVESTIMENTO -->
+  <section class="panel" data-screen-label="Informações da proposta">
+    <div class="wrap">
+      <div class="panel-head">
+        <h2>Informações sobre a proposta</h2>
+        <span class="avisos">Avisos</span>
+      </div>
+      <div id="infoCards"></div>
+
+      <div class="invest" id="investimento" data-screen-label="Investimento" style="margin-left: 128px">
+        <span class="tag">Investimento</span>
+        <p class="lead">Esse seria o valor de cada item individualmente. Considerando o pacote e as bonificações, fica assim:</p>
+        <table class="svc-table"><tbody id="svcRows"></tbody></table>
+        <div class="price-de" id="priceDe"></div>
+        <div class="price-big" id="priceBig"></div>
+        <div class="price-sub" id="priceSub"></div>
+        <div class="price-pix" id="pricePix"></div>
+        <div class="valid-note">Estas condições são válidas por <span id="validadeLabel"></span>.</div>
+        <div class="countdown" id="countdown"></div>
+        <a class="btn-hot" id="ctaBtn" href="#">Quero fechar esta proposta</a>
+        <div class="doubt">Ainda ficou com alguma dúvida? <a id="duvidaLink" href="#">Fale com nosso time</a></div>
+      </div>
+    </div>
+
+    <footer data-screen-label="Footer">
+      <div class="wrap foot">
+        <img src="assets/logos/start-inc-negative-white.png" alt="START INC.">
+        <span class="mid">Growth · Marketing · IA</span>
+        <span style="text-align:right">© <span id="fAno"></span> START INC.<br>Todos os direitos reservados</span>
+      </div>
+    </footer>
+  </section>
+</div>
+
+<script src="pdf-download.js"></script>
+<script src="proposta-start-render.js"></script>
+</body>
+</html>

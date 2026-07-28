@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma Comercial — START INC.</title>
+<link rel="stylesheet" href="_ds/start-inc-design-system-dd24822c-4983-46b4-afbe-4353ab54a1b3/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/start-inc-design-system-dd24822c-4983-46b4-afbe-4353ab54a1b3/tokens/colors.css">
+<link rel="stylesheet" href="_ds/start-inc-design-system-dd24822c-4983-46b4-afbe-4353ab54a1b3/tokens/typography.css">
+<link rel="stylesheet" href="_ds/start-inc-design-system-dd24822c-4983-46b4-afbe-4353ab54a1b3/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/start-inc-design-system-dd24822c-4983-46b4-afbe-4353ab54a1b3/tokens/effects.css">
+<link rel="stylesheet" href="_ds/start-inc-design-system-dd24822c-4983-46b4-afbe-4353ab54a1b3/base.css">
+<link rel="stylesheet" href="_ds/start-inc-design-system-dd24822c-4983-46b4-afbe-4353ab54a1b3/styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== Tema Dark / Neon — override do design system START INC ===== */
+  :root, [data-plat-theme="dark"]{
+    --font-display:'Chakra Petch',sans-serif;
+    --font-body:'Chakra Petch',sans-serif;
+
+    --color-bg:#01050c;
+    --color-bg-subtle:#04070e;
+    --color-surface:#0a0f18;
+    --color-surface-2:#04070e;
+
+    --color-dark:#f1fcff;
+    --color-text:#f1fcff;
+    --color-text-muted:#9fb2c9;
+    --color-text-on-dark-muted:rgba(255,255,255,.6);
+
+    --color-border:rgba(255,255,255,.10);
+    --color-border-dark:rgba(255,255,255,.08);
+
+    --color-primary:#ff2fd0;
+    --color-primary-hover:#ff7a00;
+    --color-primary-press:#d81ea9;
+    --color-primary-tint:rgba(255,47,208,.16);
+    --sky-300:#00d1ff;
+    --color-success:#2ee6a8;
+
+    --gradient-brand:linear-gradient(90deg,#ff7a00 0%,#ff00f5 100%);
+    --shadow-card:0 10px 30px rgba(0,0,0,.45);
+    --shadow-card-hover:0 18px 44px rgba(0,0,0,.6);
+    --shadow-xl:0 30px 80px rgba(0,0,0,.6);
+    --shadow-focus:0 0 0 3px rgba(255,47,208,.28);
+  }
+  [data-plat-theme="light"]{
+    --font-display:'Poppins',sans-serif;
+    --font-body:'Rubik',sans-serif;
+
+    --color-bg:#ffffff;
+    --color-bg-subtle:#f8f8f8;
+    --color-surface:#ffffff;
+    --color-surface-2:#f8f8f8;
+
+    --color-dark:#1d274e;
+    --color-text:#292929;
+    --color-text-muted:#5b6472;
+    --color-text-on-dark-muted:#5b6472;
+
+    --color-border:#e4e9f0;
+    --color-border-dark:#d3dce8;
+
+    --color-primary:#0093e0;
+    --color-primary-hover:#0084c9;
+    --color-primary-press:#054b8d;
+    --color-primary-tint:rgba(0,147,224,.12);
+    --sky-300:#0093e0;
+    --color-success:#22c55e;
+
+    --gradient-brand:linear-gradient(90deg,#0093e0,#0c5cb8);
+    --shadow-card:0 10px 30px rgba(10,25,60,.08);
+    --shadow-card-hover:0 18px 44px rgba(10,25,60,.12);
+    --shadow-xl:0 30px 80px rgba(10,25,60,.12);
+    --shadow-focus:0 0 0 3px rgba(0,147,224,.16);
+  }
+  html,body{margin:0;background:var(--color-bg);color:var(--color-text);transition:background .3s,color .3s}
+  a{color:var(--sky-300)}a:hover{opacity:.8}
+  input[type="checkbox"]{margin:0}
+  ::selection{background:var(--color-primary-tint)}
+  input::placeholder,textarea::placeholder{color:var(--color-text-muted)}
+  select option{background:var(--color-surface);color:var(--color-text)}
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="_ds/start-inc-design-system-dd24822c-4983-46b4-afbe-4353ab54a1b3/_ds_bundle.js"></script>
+<script src="plataforma/data.js"></script>
+<script src="plataforma/imgstore.js"></script>
+<style>.pf-prev.pf-scroll>img{animation:pfPrevScroll 16s ease-in-out infinite alternate;will-change:transform}@keyframes pfPrevScroll{0%,7%{transform:translateY(0)}93%,100%{transform:translateY(calc(-100% + var(--pf-h,100%)))}}@media (prefers-reduced-motion:reduce){.pf-prev.pf-scroll>img{animation:none}}</style>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<rect width="100" height="100" fill="#01050c"/>
+<rect x="30" y="34" width="40" height="32" rx="4" fill="none" stroke="#ff2fd0" stroke-width="3"/>
+<path d="M38 50h24M38 57h16" stroke="#00d1ff" stroke-width="3" stroke-linecap="round"/>
+<circle cx="50" cy="42" r="3" fill="#ff7a00"/>
+</svg>
+</template>
+<div id="root"></div>
+<script type="text/babel" src="plataforma/ui.jsx"></script>
+<script type="text/babel" src="plataforma/servicos.jsx"></script>
+<script type="text/babel" src="plataforma/bonus.jsx"></script>
+<script type="text/babel" src="plataforma/depoimentos.jsx"></script>
+<script type="text/babel" src="plataforma/portfolio.jsx"></script>
+<script type="text/babel" src="plataforma/donos.jsx"></script>
+<script type="text/babel" src="plataforma/templates.jsx"></script>
+<script type="text/babel" src="plataforma/editor.jsx"></script>
+<script type="text/babel" src="plataforma/propostas.jsx"></script>
+<script type="text/babel" src="plataforma/app.jsx"></script>
+</body>
+</html>
