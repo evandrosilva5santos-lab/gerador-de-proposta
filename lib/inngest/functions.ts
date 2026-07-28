@@ -9,9 +9,9 @@ export const processNewLead = inngest.createFunction(
   { 
     id: "process-new-lead",
     name: "Processamento de Novo Lead",
-    retries: 3 // Tenta 3 vezes em caso de falha (ex: banco caiu, api do zap falhou)
+    retries: 3, // Tenta 3 vezes em caso de falha (ex: banco caiu, api do zap falhou)
+    triggers: [{ event: "lead/received" }]
   },
-  { event: "lead/received" },
   async ({ event, step }) => {
     const { workspaceId, source, rawPayload } = event.data;
 
