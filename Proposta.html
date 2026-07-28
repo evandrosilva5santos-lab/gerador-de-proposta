@@ -8,8 +8,18 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="proposta.css">
-<script src="image-slot.js"></script>
 <script src="plataforma/imgstore.js"></script>
+<script>
+/* Proposta é somente leitura para quem recebe: sem edição, sem arrastar imagem, sem menu de contexto nas mídias */
+document.addEventListener('DOMContentLoaded',function(){
+  document.body.setAttribute('contenteditable','false');
+  document.querySelectorAll('[contenteditable]').forEach(function(el){el.setAttribute('contenteditable','false')});
+  document.addEventListener('dragover',function(e){e.preventDefault()});
+  document.addEventListener('drop',function(e){e.preventDefault()});
+  document.querySelectorAll('img').forEach(function(im){im.draggable=false;im.addEventListener('contextmenu',function(e){e.preventDefault()})});
+});
+</script>
+<style>img{-webkit-user-drag:none;user-select:none}</style>
 </head>
 <body>
 
@@ -19,7 +29,7 @@
 
 <!-- HERO -->
 <section class="hero" data-screen-label="Hero">
-  <div class="hero-bg"><image-slot id="hero-bg" shape="rect" placeholder="Arraste sua foto de fundo (1920×900)"></image-slot></div>
+  <div class="hero-bg" id="hero-bg"></div>
   <div class="wrap hero-inner">
     <div></div>
     <div class="hero-copy">
@@ -70,7 +80,7 @@
 <section class="section" data-screen-label="Quem sou eu">
   <div class="wrap about">
     <div class="about-photo">
-      <image-slot id="about-photo" shape="rect" placeholder="Arraste sua foto"></image-slot>
+      <img id="about-photo" alt="Equipe START INC." style="width:100%;height:100%;object-fit:cover;display:block">
       <div class="about-badge" id="aboutBadge"></div>
     </div>
     <div class="about-txt">
