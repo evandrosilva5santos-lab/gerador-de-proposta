@@ -4,9 +4,27 @@ const DS_P = window.STARTINCDesignSystem_dd2482;
 function LinkControls({ p, patch }) {
   const link = p.link || {};
   const set = (k, v) => patch({ link: { ...link, [k]: v } });
+  const slugVal = p.slug || '';
   return (
     <div style={{ background: 'var(--color-bg-subtle)', borderRadius: 'var(--radius-md)', padding: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+        <Field 
+          label="Slug Personalizada (Link curto)" 
+          value={slugVal} 
+          onChange={v => patch({ slug: v.toLowerCase().replace(/[^a-z0-9-_]/g, '-') })} 
+          placeholder="Ex.: empresa-acme" 
+          style={{ minWidth: 200, flex: 1 }} 
+        />
+        <SelectField 
+          label="Tipo de Link ao copiar" 
+          value={p.linkMode || 'short'} 
+          onChange={v => patch({ linkMode: v })} 
+          options={[
+            { value: 'short', label: 'Link Curto (Recomendado)' },
+            { value: 'full', label: 'Link Completo (Offline / Embarcado)' }
+          ]} 
+          style={{ maxWidth: 220 }} 
+        />
         <SelectField label="Link expira em" value={String(link.expiraDias)} onChange={v => set('expiraDias', Number(v))} options={[
           { value: '3', label: '3 dias' }, { value: '7', label: '7 dias' }, { value: '10', label: '10 dias' }, { value: '30', label: '30 dias' }, { value: '0', label: 'Nunca' }]} style={{ maxWidth: 160 }} />
         <Field label="Senha (opcional)" value={link.senha} onChange={v => set('senha', v)} placeholder="Sem senha" style={{ maxWidth: 180 }} />
@@ -37,12 +55,14 @@ function PropostasPage({ db, update, highlight, go }) {
   const [copied, setCopied] = React.useState(null);
   const [manual, setManual] = React.useState(null);
 
-  const patchP = (id, changes) => update({ propostas: db.propostas.map(p => p.id === id ? { ...p, ...changes } : p) });
+  const patchP = (id, changes) => {
+    const nextPropostas = db.propostas.map(p => p.id === id ? { ...p, ...changes } : p);
+    update({ propostas: nextPropostas });
+    const pUpdated = nextPropostas.find(x => x.id === id);
+    if(pUpdated) syncApi(pUpdated);
+  };
 
   const fileFor = (p) => p.template === 'completa' ? 'Proposta.html' : 'Proposta START.html';
-  // link permanente: os dados da proposta viajam DENTRO do link (#p=), então
-  // funciona em qualquer navegador/dispositivo e nunca "morre".
-  // remove imagens embutidas gigantes (data URLs) para o link não estourar o limite do navegador
   const slim = (p) => {
     const leve = v => !(typeof v === 'string' && v.startsWith('data:') && v.length > 6000);
     const o = JSON.parse(JSON.stringify(p));
@@ -52,16 +72,30 @@ function PropostasPage({ db, update, highlight, go }) {
     return o;
   };
   const encode = (p) => btoa(unescape(encodeURIComponent(JSON.stringify(slim(p))))).replace(/\+/g, '-').replace(/\//g, '_');
-  const slugOf = (p) => p.slug || StartDB.makeSlug(p.cliente, p.empresa, db.propostas, p.id);
-  const urlFor = (p) => new URL(`${fileFor(p)}?p=${slugOf(p)}&id=${p.id}#p=${encode(p)}`, location.href).href;
+  const slugOf = (p) => (p.slug || StartDB.makeSlug(p.cliente, p.empresa, db.propostas, p.id)).toLowerCase().replace(/[^a-z0-9-_]/g, '-');
+  
+  const shortUrlFor = (p) => new URL(`${fileFor(p)}?p=${slugOf(p)}`, location.href).href;
+  const fullUrlFor = (p) => new URL(`${fileFor(p)}?p=${slugOf(p)}&id=${p.id}#p=${encode(p)}`, location.href).href;
+  const urlFor = (p) => (p.linkMode === 'full' ? fullUrlFor(p) : shortUrlFor(p));
+
+  const syncApi = (p) => {
+    try {
+      fetch('/api/propostas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(p)
+      }).catch(() => {});
+    } catch(e) {}
+  };
+
   const copiar = async (p) => {
+    syncApi(p);
     const url = urlFor(p);
     let ok = false;
     try {
       if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(url); ok = true; }
     } catch (e) { ok = false; }
     if (!ok) {
-      // fallback para contextos sem permissão de clipboard (iframe, http)
       const ta = document.createElement('textarea');
       ta.value = url; ta.setAttribute('readonly', '');
       ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
@@ -72,6 +106,7 @@ function PropostasPage({ db, update, highlight, go }) {
     if (ok) { setCopied(p.id); setTimeout(() => setCopied(null), 2000); }
     else setManual({ id: p.id, url });
   };
+
   const totalDe = (p) => {
     const unico = p.servicos.filter(s => s.rec !== 'mensal').reduce((a, s) => a + Number(s.preco || 0), 0);
     const mensal = p.servicos.filter(s => s.rec === 'mensal').reduce((a, s) => a + Number(s.preco || 0), 0);
@@ -81,9 +116,9 @@ function PropostasPage({ db, update, highlight, go }) {
 
   return (
     <div>
-      <PageHead title="Propostas" sub="Todas as propostas geradas, com link de envio, controles de acesso e registro de visualizações." />
+      <PageHead title="Propostas" sub="Todas as propostas geradas, com link de envio, controle de slug/URL, permissões e histórico de acessos." />
       <div style={{ background: 'var(--color-bg-subtle)', borderLeft: '3px solid var(--color-primary)', borderRadius: 'var(--radius-sm)', padding: '12px 16px', font: 'var(--text-body-sm)', color: 'var(--color-text-muted)', marginBottom: 16 }}>
-        <b style={{ color: 'var(--color-dark)' }}>Link permanente:</b> os dados da proposta viajam dentro do próprio link, então ele abre em qualquer navegador e não expira. A validade só controla o contador exibido na proposta.
+        <b style={{ color: 'var(--color-dark)' }}>Link Curto Personalizado:</b> Você pode editar a slug de cada proposta (ex: <code>/empresa-acme</code>) para enviar um link curto e profissional.
       </div>
       {db.propostas.length === 0 && <Empty>Nenhuma proposta ainda. Crie a primeira em "Nova proposta".</Empty>}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -103,7 +138,7 @@ function PropostasPage({ db, update, highlight, go }) {
               <DS_P.Badge tone={statusTone[p.link?.status] || 'neutral'}>{p.link?.status || 'Enviada'}</DS_P.Badge>
               <span style={{ font: 'var(--text-body-sm)', color: 'var(--color-text-muted)' }}>{(p.link?.views || []).length} views</span>
               <div style={{ display: 'flex', gap: 8 }}>
-                <a href={`${fileFor(p)}?p=${slugOf(p)}&id=${p.id}#p=${encode(p)}`} style={{ textDecoration: 'none' }}><DS_P.Button size="sm" variant="primary">Abrir</DS_P.Button></a>
+                <a href={shortUrlFor(p)} style={{ textDecoration: 'none' }} target="_blank" rel="noreferrer"><DS_P.Button size="sm" variant="primary">Abrir</DS_P.Button></a>
                 <DS_P.Button size="sm" variant="secondary" onClick={() => copiar(p)}>{copied === p.id ? 'Copiado ✓' : 'Copiar link'}</DS_P.Button>
                 <DS_P.Button size="sm" variant="secondary" onClick={() => window.open(`${fileFor(p)}?p=${slugOf(p)}&id=${p.id}&print=1#p=${encode(p)}`, '_blank')}>Baixar PDF</DS_P.Button>
                 <DS_P.Button size="sm" variant="secondary" onClick={() => go('editor', null, p)}>Editar</DS_P.Button>
@@ -111,6 +146,7 @@ function PropostasPage({ db, update, highlight, go }) {
                   const novoId = StartDB.uid();
                   const copia = { ...p, id: novoId, slug: StartDB.makeSlug(p.cliente + ' copia', p.empresa, db.propostas, novoId), criadoEm: new Date().toISOString(), link: { ...(p.link || {}), status: 'Enviada', views: [] } };
                   update({ propostas: [copia, ...db.propostas] });
+                  syncApi(copia);
                 }}>Duplicar</DS_P.Button>
                 <DS_P.Button size="sm" variant="ghost" onClick={() => setOpen(open === p.id ? null : p.id)}>{open === p.id ? 'Fechar' : 'Controles'}</DS_P.Button>
               </div>

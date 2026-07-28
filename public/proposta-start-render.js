@@ -32,8 +32,21 @@
   }
   const params = new URLSearchParams(location.search);
   const pid = params.get('id');
+  const pslug = params.get('p');
   const db = loadDb();
-  let p = fromHash() || (db.propostas||[]).find(x=>x.id===pid);
+  let p = fromHash() || (db.propostas||[]).find(x=>x.id===pid || (x.slug && pslug && x.slug.toLowerCase()===pslug.toLowerCase()));
+  if(!p && (pslug || pid)){
+    try {
+      const xhr = new XMLHttpRequest();
+      const query = pslug ? `p=${encodeURIComponent(pslug)}` : `id=${encodeURIComponent(pid)}`;
+      xhr.open('GET', `/api/propostas?${query}`, false);
+      xhr.send();
+      if(xhr.status === 200){
+        const json = JSON.parse(xhr.responseText);
+        if(json && !json.error) p = json;
+      }
+    }catch(e){}
+  }
   const isDemo = !p;
   if(!p){
     const seedSvc = (db.servicos&&db.servicos.length) ? db.servicos.slice(0,2) : [
@@ -72,7 +85,13 @@
     const hb = $('hero-bg');
     if(o.heroImg && hb){ const u = IMG(o.heroImg); if(u) hb.style.background = `url('${u}') center 12% / cover no-repeat`; }
     document.querySelectorAll('img[data-ref]').forEach(im => { const u = IMG(im.getAttribute('data-ref')); if(u) im.src = u; });
+    // recalcula a altura dos quadros de portfólio depois das imagens resolverem
+    document.querySelectorAll('#pfGrid .pf-item').forEach(it => it.style.setProperty('--pf-h', it.clientHeight + 'px'));
   }
+
+  // foto da seção "Quem somos": usa a do autor da proposta, senão a foto da equipe
+  const ap = $('about-photo');
+  if(ap) ap.src = IMG((p.owner || {}).aboutImg) || 'assets/donos/start-equipe.png';
 
   document.documentElement.setAttribute('data-theme', p.template === 'start' ? 'start' : 'dark');
   document.title = `Proposta ${p.id} — ${p.cliente} · START INC.`;
@@ -182,6 +201,18 @@
     } else $('bonusSec').style.display='none';
 
     // depoimentos — vindos da proposta (puxados pelo tema); fallback para o conjunto padrão
+    // portfólio (prints de trabalhos)
+    const pfs = (p.portfolio || []).filter(d => d && d.img);
+    const pfSec = $('pfSec');
+    if(!pfs.length){ if(pfSec) pfSec.style.display = 'none'; }
+    else {
+      if(pfSec) pfSec.style.display = '';
+      $('pfGrid').innerHTML = pfs.map(d =>
+        `<div class="pf-item${d.anim ? ' pf-scroll' : ''}"><img src="${IMGSRC(d.img)}" data-ref="${esc(d.img||'')}" alt="${esc(d.titulo||'Portfólio')}"></div>`).join('');
+      // guarda a altura do quadro para a animação de rolagem parar no fim da imagem
+      $('pfGrid').querySelectorAll('.pf-item').forEach(it => it.style.setProperty('--pf-h', it.clientHeight + 'px'));
+    }
+
     const deps = (p.depoimentos && p.depoimentos.length)
       ? p.depoimentos.map(t => ({ img: t.img, nome: t.nome, hd: t.handle || t.hd || '' }))
       : DEPOIMENTOS;

@@ -32,8 +32,21 @@
   }
   const params = new URLSearchParams(location.search);
   const pid = params.get('id');
+  const pslug = params.get('p');
   const db = loadDb();
-  let p = fromHash() || (db.propostas||[]).find(x=>x.id===pid);
+  let p = fromHash() || (db.propostas||[]).find(x=>x.id===pid || (x.slug && pslug && x.slug.toLowerCase()===pslug.toLowerCase()));
+  if(!p && (pslug || pid)){
+    try {
+      const xhr = new XMLHttpRequest();
+      const query = pslug ? `p=${encodeURIComponent(pslug)}` : `id=${encodeURIComponent(pid)}`;
+      xhr.open('GET', `/api/propostas?${query}`, false);
+      xhr.send();
+      if(xhr.status === 200){
+        const json = JSON.parse(xhr.responseText);
+        if(json && !json.error) p = json;
+      }
+    }catch(e){}
+  }
   const isDemo = !p;
   if(!p){
     const seedSvc = (db.servicos&&db.servicos.length) ? db.servicos.slice(0,2) : [

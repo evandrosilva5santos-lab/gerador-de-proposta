@@ -42,6 +42,7 @@ function pfForTema(db, temaId) {
 function EditorPage({ db, update, go, editing }) {
   const isEdit = !!(editing && !editing.novo);
   const [f, setF] = React.useState(() => editing ? {
+    slug: editing.slug || '',
     cliente: editing.cliente || '', empresa: editing.empresa || '', template: editing.template || 'dark',
     objetivo: editing.objetivo || '', validadeDias: editing.validadeDias || 7, descontoPix: editing.descontoPix !== false,
     contratoMeses: editing.contratoMeses === undefined ? 0 : Number(editing.contratoMeses), pagamento: editing.pagamento || 'pix',
@@ -54,7 +55,7 @@ function EditorPage({ db, update, go, editing }) {
     selPf: (editing.portfolio || []).map(p => { const m = (db.portfolio || []).find(x => x.img === p.img); return m && m.id; }).filter(Boolean),
     etapasCustom: editing.etapas && editing.etapas.length ? editing.etapas : null
   } : {
-    cliente: '', empresa: '', template: 'dark', objetivo: '',
+    slug: '', cliente: '', empresa: '', template: 'dark', objetivo: '',
     validadeDias: 7, descontoPix: true,
     contratoMeses: 0, pagamento: 'pix',
     tema: 'trafego', owner: 'start',
@@ -97,8 +98,10 @@ function EditorPage({ db, update, go, editing }) {
     if (!f.cliente.trim() || f.sel.length === 0) return;
     const codigo = isEdit ? editing.id : StartDB.uid();
     const ownerObj = db.owners.find(o => o.id === f.owner) || db.owners[0];
+    const userSlug = (f.slug || '').trim().toLowerCase().replace(/[^a-z0-9-_]/g, '-');
     const proposta = {
-      id: codigo, slug: StartDB.makeSlug(f.cliente, f.empresa, db.propostas, codigo),
+      id: codigo,
+      slug: userSlug || StartDB.makeSlug(f.cliente, f.empresa, db.propostas, codigo),
       cliente: f.cliente, empresa: f.empresa, template: f.template,
       objetivo: f.objetivo, validadeDias: Number(f.validadeDias) || 7, descontoPix: f.descontoPix,
       contratoMeses: Number(f.contratoMeses) || 0, pagamento: f.pagamento,
@@ -121,6 +124,13 @@ function EditorPage({ db, update, go, editing }) {
     update({ propostas: isEdit
       ? db.propostas.map(p => p.id === codigo ? proposta : p)
       : [proposta, ...db.propostas] });
+    try {
+      fetch('/api/propostas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(proposta)
+      }).catch(() => {});
+    } catch(e) {}
     go('propostas', codigo);
   };
 
@@ -129,12 +139,13 @@ function EditorPage({ db, update, go, editing }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 24, alignItems: 'start' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        <PageHead title={isEdit ? 'Editar proposta #' + editing.id : 'Nova proposta'} sub={isEdit ? 'Alterando uma proposta já criada — o link e o histórico de acessos são mantidos.' : 'Monte a oferta selecionando serviços e bonificações da biblioteca. O investimento é calculado automaticamente.'} />
+        <PageHead title={isEdit ? 'Editar proposta #' + editing.id : 'Nova proposta'} sub={isEdit ? 'Alterando uma proposta já criada — o link e o histórico de acessos são mantidos.' : 'Monte a oferta selecionando serviços e bonificações da biblioteca. O investimento é calculated automaticamente.'} />
         <DS_E.Card padding="lg">
           {secTitle('Cliente')}
           <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
             <Field label="Nome do contato" value={f.cliente} onChange={v => set('cliente', v)} placeholder="Ex.: Dra. Camila" />
             <Field label="Empresa" value={f.empresa} onChange={v => set('empresa', v)} placeholder="Ex.: Clínica Vida" />
+            <Field label="Slug da URL (ex: clinica-vida)" value={f.slug || ''} onChange={v => set('slug', v.toLowerCase().replace(/[^a-z0-9-_]/g, '-'))} placeholder="Ex.: clinica-vida" />
           </div>
           <div style={{ display: 'flex', gap: 14, marginTop: 14, flexWrap: 'wrap' }}>
             <SelectField label="Template da proposta" value={f.template} onChange={v => set('template', v)} options={[

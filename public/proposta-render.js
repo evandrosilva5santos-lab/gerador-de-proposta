@@ -7,6 +7,8 @@ const IMGSRC = v => IMG(v) || PX;
 function __applyImgRefs(){
   document.querySelectorAll('img[data-ref]').forEach(im => { const u = IMG(im.getAttribute('data-ref')); if(u) im.src = u; });
   document.querySelectorAll('[data-hero-ref]').forEach(el => { const u = IMG(el.getAttribute('data-hero-ref')); if(u) el.style.background = `url('${u}') center 12% / cover no-repeat`; });
+  const ap = document.getElementById('about-photo');
+  if(ap && !ap.getAttribute('src')) ap.src = 'assets/donos/start-equipe.png';
 }
 if(window.StartImg) window.StartImg.init().then(__applyImgRefs).catch(()=>{});
 (function(){
@@ -48,22 +50,44 @@ if(window.StartImg) window.StartImg.init().then(__applyImgRefs).catch(()=>{});
   };
 
   function readData(){
-    // 1) proposta vinda da plataforma (?id=) — traz hero do dono + depoimentos do tema
+    const params = new URLSearchParams(location.search);
+    const pid = params.get('id');
+    const pslug = params.get('p');
+
+    // 1a) LocalStorage local
     try{
-      const params = new URLSearchParams(location.search);
-      const pid = params.get('id');
+      const db = JSON.parse(localStorage.getItem('start-plataforma-v1')||'{}');
       if(pid){
-        const db = JSON.parse(localStorage.getItem('start-plataforma-v1')||'{}');
         const p = (db.propostas||[]).find(x=>x.id===pid);
         if(p) return fromPlataforma(p);
       }
+      if(pslug){
+        const p = (db.propostas||[]).find(x=>(x.slug||'').toLowerCase()===pslug.toLowerCase());
+        if(p) return fromPlataforma(p);
+      }
     }catch(e){ console.warn('id plataforma inválido', e); }
-    // 1b) proposta da plataforma embutida no link (#p=)
+
+    // 1b) Hash #p= (dados embarcados)
     try{
       const m = location.hash.match(/[#&]p=([^&]+)/);
       if(m) return fromPlataforma(JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,'+').replace(/_/g,'/'))))));
     }catch(e){ console.warn('link embutido inválido', e); }
-    // 2) gerador standalone (hash #d=)
+
+    // 1c) Busca síncrona na API do servidor (/api/propostas)
+    if(pslug || pid){
+      try{
+        const xhr = new XMLHttpRequest();
+        const query = pslug ? `p=${encodeURIComponent(pslug)}` : `id=${encodeURIComponent(pid)}`;
+        xhr.open('GET', `/api/propostas?${query}`, false);
+        xhr.send();
+        if(xhr.status === 200){
+          const json = JSON.parse(xhr.responseText);
+          if(json && !json.error) return fromPlataforma(json);
+        }
+      }catch(e){}
+    }
+
+    // 2) Gerador standalone (hash #d= ou localStorage)
     try{
       const m = location.hash.match(/d=([^&]+)/);
       if(m) return JSON.parse(decodeURIComponent(escape(atob(m[1]))));
@@ -202,6 +226,8 @@ if(window.StartImg) window.StartImg.init().then(__applyImgRefs).catch(()=>{});
     const heroImg = IMG(owner.heroImg) || (String(owner.heroImg||'').startsWith('idb:') ? '' : 'assets/hero-bg.png');
     const hb = document.getElementById('hero-bg');
     if(hb) hb.outerHTML = `<div data-hero-ref="${esc(owner.heroImg||'')}" style="width:100%;height:100%;${heroImg ? `background:url('${heroImg}') center 12% / cover no-repeat` : 'background:#01050c'}"></div>`;
+    const ap = document.getElementById('about-photo');
+    if(ap) ap.src = IMG(owner.aboutImg) || 'assets/donos/start-equipe.png';
     if(owner.nome && owner.id && owner.id !== 'start'){
       const p = document.querySelector('.hero-copy p');
       if(p){

@@ -9,8 +9,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Rubik:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="proposta-start.css">
 <link rel="stylesheet" href="depoimentos.css">
-<script src="image-slot.js"></script>
 <script src="plataforma/imgstore.js"></script>
+<script>
+/* Proposta é somente leitura para quem recebe: sem edição, sem arrastar imagem, sem menu de contexto nas mídias */
+document.addEventListener('DOMContentLoaded',function(){
+  document.body.setAttribute('contenteditable','false');
+  document.querySelectorAll('[contenteditable]').forEach(function(el){el.setAttribute('contenteditable','false')});
+  document.addEventListener('dragover',function(e){e.preventDefault()});
+  document.addEventListener('drop',function(e){e.preventDefault()});
+  document.querySelectorAll('img').forEach(function(im){im.draggable=false;im.addEventListener('contextmenu',function(e){e.preventDefault()})});
+});
+</script>
+<style>img{-webkit-user-drag:none;user-select:none}</style>
 </head>
 <body>
 
@@ -83,6 +93,17 @@
     </div>
   </section>
 
+  <!-- PORTFÓLIO -->
+  <section class="section" id="pfSec" data-screen-label="Portfólio">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">Portfólio</span>
+        <h2 class="h2">Alguns trabalhos que já entregamos</h2>
+      </div>
+      <div class="pf-grid" id="pfGrid"></div>
+    </div>
+  </section>
+
   <!-- DEPOIMENTOS -->
   <section class="section alt" data-screen-label="Depoimentos">
     <div class="wrap">
@@ -98,7 +119,7 @@
   <section class="section" data-screen-label="Quem somos">
     <div class="wrap about">
       <div class="about-photo">
-        <image-slot id="about-photo" shape="rect" placeholder="Arraste uma foto da equipe/CEO"></image-slot>
+        <img id="about-photo" alt="Equipe START INC." style="width:100%;height:100%;object-fit:cover;display:block">
         <div class="about-badge">
           <div><b>+250</b> clientes atendidos</div>
           <div>clientes em mais de <b>5 países</b></div>
