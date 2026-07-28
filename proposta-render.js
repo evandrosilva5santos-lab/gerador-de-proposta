@@ -1,4 +1,14 @@
 /* Renderiza a Proposta a partir dos dados do gerador (hash #d= / localStorage) */
+// resolve refs de imagem guardadas no IndexedDB ("idb:<id>")
+const IMG = v => (window.StartImg ? window.StartImg.src(v) : v) || '';
+// pixel transparente enquanto a ref do IndexedDB não resolve (evita <img src="">)
+const PX = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+const IMGSRC = v => IMG(v) || PX;
+function __applyImgRefs(){
+  document.querySelectorAll('img[data-ref]').forEach(im => { const u = IMG(im.getAttribute('data-ref')); if(u) im.src = u; });
+  document.querySelectorAll('[data-hero-ref]').forEach(el => { const u = IMG(el.getAttribute('data-hero-ref')); if(u) el.style.background = `url('${u}') center 12% / cover no-repeat`; });
+}
+if(window.StartImg) window.StartImg.init().then(__applyImgRefs).catch(()=>{});
 (function(){
   const DEFAULTS = {
     cliente: 'Cliente',
@@ -38,6 +48,22 @@
   };
 
   function readData(){
+    // 1) proposta vinda da plataforma (?id=) — traz hero do dono + depoimentos do tema
+    try{
+      const params = new URLSearchParams(location.search);
+      const pid = params.get('id');
+      if(pid){
+        const db = JSON.parse(localStorage.getItem('start-plataforma-v1')||'{}');
+        const p = (db.propostas||[]).find(x=>x.id===pid);
+        if(p) return fromPlataforma(p);
+      }
+    }catch(e){ console.warn('id plataforma inválido', e); }
+    // 1b) proposta da plataforma embutida no link (#p=)
+    try{
+      const m = location.hash.match(/[#&]p=([^&]+)/);
+      if(m) return fromPlataforma(JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,'+').replace(/_/g,'/'))))));
+    }catch(e){ console.warn('link embutido inválido', e); }
+    // 2) gerador standalone (hash #d=)
     try{
       const m = location.hash.match(/d=([^&]+)/);
       if(m) return JSON.parse(decodeURIComponent(escape(atob(m[1]))));
@@ -47,6 +73,33 @@
       if(s) return JSON.parse(s);
     }catch(e){}
     return {};
+  }
+
+  // mapeia a proposta da plataforma para os campos deste template
+  function fromPlataforma(p){
+    const unico = (p.servicos||[]).filter(s=>s.rec!=='mensal').reduce((a,s)=>a+Number(s.preco||0),0);
+    const mensal = (p.servicos||[]).filter(s=>s.rec==='mensal').reduce((a,s)=>a+Number(s.preco||0),0);
+    const criado = new Date(p.criadoEm||Date.now());
+    const owner = p.owner || {};
+    return {
+      __plataforma: true,
+      __owner: owner,
+      cliente: p.empresa || p.cliente || 'Cliente',
+      objetivo: p.objetivo || '',
+      dataEnvio: criado.toISOString().slice(0,10),
+      validadeDias: p.validadeDias || 7, validadeHoras: 0,
+      servicos: (p.servicos||[]).map(s=>({nome:s.nome, preco:s.preco})),
+      precoPor: unico + mensal * (Number(p.contratoMeses) || 1),
+      contratoMeses: Number(p.contratoMeses) || 0, pagamento: p.pagamento || 'pix',
+      depoimentos: (p.depoimentos||[]).map(t=>({nome:t.nome, handle:t.handle||'', texto:'', img:t.img})),
+      portfolio: (p.portfolio||[]).map(x=>({img:x.img, titulo:x.titulo||'', anim:!!x.anim})),
+      infos: (p.condicoes||[]).map(c=>({titulo:c.titulo, texto:c.texto})),
+      empresa: owner.nome || 'START INC.', cnpj: '', marca: owner.cargo || 'Growth · Marketing · IA', criador: '@startinc',
+      // etapas do processo por tema (fallback = LP). Propostas antigas sem etapas caem no default LP do template.
+      etapas: (p.etapas && p.etapas.length) ? p.etapas : DEFAULTS.etapas,
+      // dados do autor para "Quem somos"
+      __autorClientes: owner.clientes, __autorPaises: owner.paises, __autorAnos: owner.anos, __autorExpertise: owner.expertise
+    };
   }
   const d = Object.assign({}, DEFAULTS, readData());
 
@@ -78,20 +131,37 @@
   document.getElementById('statsBar').innerHTML = (d.stats||[]).filter(s=>s&&s.trim()).map(s=>
     `<span class="stat-pill"><span class="dot">●</span>${esc(s)}</span>`).join('');
 
-  // portfolio: 8 slots
-  document.getElementById('pfGrid').innerHTML = Array.from({length:8},(_,i)=>
-    `<div class="pf-item"><image-slot id="pf-${i+1}" shape="rect" placeholder="Print ${i+1} do portfólio"></image-slot></div>`).join('');
+  // portfolio: usa prints embutidos da plataforma; senão, 8 slots vazios para preencher
+  const pf = (d.portfolio || []).filter(p => p && p.img);
+  if(pf.length){
+    document.getElementById('pfGrid').innerHTML = pf.map(p=>
+      `<div class="pf-item${p.anim ? ' pf-scroll' : ''}"><img src="${IMGSRC(p.img)}" data-ref="${esc(p.img||'')}" alt="${esc(p.titulo||'Portfólio')}"></div>`).join('');
+    // a rolagem precisa saber a altura visível do bloco
+    requestAnimationFrame(()=>{
+      document.querySelectorAll('#pfGrid .pf-item').forEach(el=>{
+        el.style.setProperty('--pf-h', el.clientHeight + 'px');
+      });
+    });
+  } else {
+    document.getElementById('pfGrid').innerHTML = Array.from({length:8},(_,i)=>
+      `<div class="pf-item"><image-slot id="pf-${i+1}" shape="rect" placeholder="Print ${i+1} do portfólio"></image-slot></div>`).join('');
+  }
 
   // depoimentos
-  document.getElementById('depGrid').innerHTML = (d.depoimentos||[]).map((t,i)=>`
+  document.getElementById('depGrid').innerHTML = (d.depoimentos||[]).map((t,i)=>{
+    const shot = t.img
+      ? `<img src="${IMGSRC(t.img)}" data-ref="${esc(t.img||'')}" alt="${esc(t.nome)}" style="width:100%;height:auto;display:block;object-fit:contain">`
+      : `<image-slot id="dep-shot-${i+1}" shape="rect" placeholder="Print do depoimento"></image-slot>`;
+    return `
     <div class="dep-card">
-      <div class="dep-shot"><image-slot id="dep-shot-${i+1}" shape="rect" placeholder="Print do depoimento"></image-slot></div>
-      <div class="dep-text">${esc(t.texto)}</div>
+      <div class="dep-shot">${shot}</div>
+      ${t.texto?`<div class="dep-text">${esc(t.texto)}</div>`:''}
       <div class="dep-who">
         <div class="av"><image-slot id="dep-av-${i+1}" shape="circle" placeholder=""></image-slot></div>
         <div><div class="nm">${esc(t.nome)}</div><div class="hd">${esc(t.handle)}</div></div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   // badge sobre mim (permite <b>)
   document.getElementById('aboutBadge').innerHTML = (d.badge||[]).map(l=>`<div>${l}</div>`).join('');
@@ -125,6 +195,55 @@
 
   // countdown
   const cd = document.getElementById('countdown');
+
+  // ---- customizações vindas da plataforma: hero do dono + assinatura do autor ----
+  if(d.__plataforma){
+    const owner = d.__owner || {};
+    const heroImg = IMG(owner.heroImg) || (String(owner.heroImg||'').startsWith('idb:') ? '' : 'assets/hero-bg.png');
+    const hb = document.getElementById('hero-bg');
+    if(hb) hb.outerHTML = `<div data-hero-ref="${esc(owner.heroImg||'')}" style="width:100%;height:100%;${heroImg ? `background:url('${heroImg}') center 12% / cover no-repeat` : 'background:#01050c'}"></div>`;
+    if(owner.nome && owner.id && owner.id !== 'start'){
+      const p = document.querySelector('.hero-copy p');
+      if(p){
+        const a = document.createElement('div');
+        a.className = 'hero-author';
+        a.innerHTML = `<span class="ha-label">Apresentado por</span><b>${esc(owner.nome)}</b>${owner.cargo?`<span class="ha-role">· ${esc(owner.cargo)}</span>`:''}`;
+        p.insertAdjacentElement('afterend', a);
+      }
+    }
+    if(d.objetivo){ const p = document.querySelector('.hero-copy p'); if(p) p.textContent = d.objetivo; }
+    // renderiza a seção "Quem somos" com dados do autor
+    if(d.__autorClientes){
+      const container = document.getElementById('statsAutor');
+      if(container){
+        container.innerHTML = `
+          <div style="padding:20px;border-radius:10px;background:var(--bg-subtle);text-align:center">
+            <div style="font-size:28px;font-weight:700;color:var(--txt-hot)">+${d.__autorClientes}</div>
+            <div style="font-size:13px;color:var(--txt-mute);margin-top:6px">clientes atendidos</div>
+          </div>
+          <div style="padding:20px;border-radius:10px;background:var(--bg-subtle);text-align:center">
+            <div style="font-size:28px;font-weight:700;color:var(--txt-hot)">${d.__autorAnos}</div>
+            <div style="font-size:13px;color:var(--txt-mute);margin-top:6px">anos de experiência</div>
+          </div>
+          <div style="padding:20px;border-radius:10px;background:var(--bg-subtle);text-align:center">
+            <div style="font-size:28px;font-weight:700;color:var(--txt-hot)">+${d.__autorPaises}</div>
+            <div style="font-size:13px;color:var(--txt-mute);margin-top:6px">países atendidos</div>
+          </div>
+        `;
+        if(d.__autorExpertise && d.__autorExpertise.length){
+          const expertise = document.createElement('div');
+          expertise.style.cssText = 'margin:24px 0;text-align:center';
+          expertise.innerHTML = `
+            <span style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--txt-mute);display:block;margin-bottom:12px">Especialidades</span>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+              ${d.__autorExpertise.map(e=>`<span style="padding:8px 16px;border-radius:999px;background:var(--color-primary-tint);color:var(--txt-hot);font-size:13px;font-weight:600">${esc(e)}</span>`).join('')}
+            </div>
+          `;
+          container.parentElement.insertAdjacentElement('afterend', expertise);
+        }
+      }
+    }
+  }
   function tick(){
     const ms = deadline - Date.now();
     if(ms <= 0){ cd.innerHTML = 'Oferta expirada — fale comigo para renovar.'; return; }
@@ -133,4 +252,38 @@
     setTimeout(tick, 30e3);
   }
   tick();
+})();
+
+/* Botão "Baixar PDF" + impressão */
+(function(){
+  function initPdf(allowed){
+    if(allowed === false) return;
+    var st = document.createElement('style');
+    st.textContent = '.pdf-fab{position:fixed;right:20px;bottom:20px;z-index:9999;display:flex;align-items:center;gap:8px;padding:12px 20px;border:0;border-radius:999px;background:#111;color:#fff;font:600 14px/1 system-ui,-apple-system,sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.28)}.pdf-fab:hover{transform:translateY(-1px)}@media print{.pdf-fab{display:none!important}}';
+    document.head.appendChild(st);
+    var b = document.createElement('button');
+    b.className = 'pdf-fab';
+    b.innerHTML = '\u2193 Baixar PDF';
+    function doPrint(){
+      var imgs = Array.prototype.slice.call(document.images).filter(function(i){ return !i.complete; });
+      Promise.all(imgs.map(function(i){ return new Promise(function(r){ i.onload = i.onerror = r; }); }).concat([document.fonts && document.fonts.ready]))
+        .then(function(){ setTimeout(function(){ window.print(); }, 250); });
+    }
+    b.onclick = function(){
+      var pr = window.__proposta || {};
+      var nome = 'Proposta START' + (pr.cliente ? ' - ' + String(pr.cliente).replace(/[^\w\s-]/g,'') : '');
+      if(window.StartPDF) window.StartPDF.download(nome); else doPrint();
+    };
+    window.__doPrint = doPrint;
+    document.body.appendChild(b);
+    if(new URLSearchParams(location.search).get('print') === '1'){
+      setTimeout(function(){ if(window.StartPDF) window.StartPDF.download('Proposta START'); else doPrint(); }, 600);
+    }
+  }
+  window.__initPdfButton = initPdf;
+  document.addEventListener('DOMContentLoaded', function(){
+    const arrancar = () => setTimeout(function(){ if(!document.querySelector('.pdf-fab')) initPdf(window.__pdfAllowed); }, 600);
+    // espera o banco de imagens para o PDF nunca sair sem os prints
+    if(window.StartImg) window.StartImg.init().then(arrancar).catch(arrancar); else arrancar();
+  });
 })();

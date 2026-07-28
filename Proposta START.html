@@ -8,7 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Rubik:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="proposta-start.css">
+<link rel="stylesheet" href="depoimentos.css">
 <script src="image-slot.js"></script>
+<script src="plataforma/imgstore.js"></script>
 </head>
 <body>
 
@@ -39,6 +41,7 @@
         <div class="kicker">Proposta comercial</div>
         <h1><span class="l1">Olá,</span><span class="l2">"<span id="hCliente">Cliente</span>"</span></h1>
         <p id="hIntro">Preparamos esta proposta com os serviços, entregáveis, bonificações e condições pensados para o seu momento. Role para ver tudo.</p>
+        <div class="hero-author" id="hAuthor" style="display:none"></div>
         <a class="btn-hot" href="#escopo">Ver as informações ↓</a>
       </div>
     </div>
@@ -87,7 +90,7 @@
         <span class="tag">Depoimentos</span>
         <h2 class="h2">O que dizem quem já cresceu com a Start</h2>
       </div>
-      <div class="dep-grid" id="depGrid"></div>
+      <div class="dep-masonry" id="depGrid"></div>
     </div>
   </section>
 
@@ -134,7 +137,7 @@ Não trabalhamos com achismo: cada decisão é orientada por dados e pensada par
       </div>
       <div id="infoCards"></div>
 
-      <div class="invest" id="investimento" data-screen-label="Investimento">
+      <div class="invest" id="investimento" data-screen-label="Investimento" style="margin-left: 128px">
         <span class="tag">Investimento</span>
         <p class="lead">Esse seria o valor de cada item individualmente. Considerando o pacote e as bonificações, fica assim:</p>
         <table class="svc-table"><tbody id="svcRows"></tbody></table>
@@ -147,18 +150,19 @@ Não trabalhamos com achismo: cada decisão é orientada por dados e pensada par
         <a class="btn-hot" id="ctaBtn" href="#">Quero fechar esta proposta</a>
         <div class="doubt">Ainda ficou com alguma dúvida? <a id="duvidaLink" href="#">Fale com nosso time</a></div>
       </div>
-
-      <footer data-screen-label="Footer">
-        <div class="foot">
-          <img src="assets/logos/start-inc-negative-white.png" alt="START INC.">
-          <span class="mid">Growth · Marketing · IA</span>
-          <span style="text-align:right">© <span id="fAno"></span> START INC.<br>Todos os direitos reservados</span>
-        </div>
-      </footer>
     </div>
+
+    <footer data-screen-label="Footer">
+      <div class="wrap foot">
+        <img src="assets/logos/start-inc-negative-white.png" alt="START INC.">
+        <span class="mid">Growth · Marketing · IA</span>
+        <span style="text-align:right">© <span id="fAno"></span> START INC.<br>Todos os direitos reservados</span>
+      </div>
+    </footer>
   </section>
 </div>
 
+<script src="pdf-download.js"></script>
 <script src="proposta-start-render.js"></script>
 </body>
 </html>

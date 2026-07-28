@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design System — START Proposta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Rubik:wght@400;500&family=Chakra+Petch:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="proposta-start.css">
+<link rel="stylesheet" href="depoimentos.css">
+<style>
+  body{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+  /* sidebar */
+  .ds-nav{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;border-right:1px solid var(--stroke);padding:30px 24px;background:var(--bg-2)}
+  .ds-nav .brand{font-family:var(--f-head);font-weight:700;font-size:16px;color:var(--head);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+  .ds-nav .brand span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ds-nav .sub{font-family:var(--f-ui);font-size:11.5px;color:var(--txt-mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:26px}
+  .ds-nav a{display:block;font-family:var(--f-ui);font-size:13.5px;color:var(--txt-soft);padding:8px 12px;border-radius:7px;margin-bottom:2px}
+  .ds-nav a:hover{background:var(--card);opacity:1;color:#fff}
+  .ds-nav .grp{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-mute);margin:22px 0 6px 12px}
+  .theme-toggle{display:flex;gap:8px;margin-top:26px}
+  .theme-toggle button{flex:1;font-family:var(--f-ui);font-size:12px;padding:9px;border-radius:7px;border:1px solid var(--stroke);background:var(--card);color:var(--txt-soft);cursor:pointer}
+  .theme-toggle button.on{background:var(--grad);color:#fff;border-color:transparent}
+  /* content */
+  .ds-main{padding:0}
+  .ds-hero{padding:56px 56px 44px;border-bottom:1px solid var(--stroke)}
+  .ds-hero h1{font-family:var(--f-head);font-weight:700;font-size:44px;color:var(--head);text-transform:uppercase;line-height:1.05}
+  .ds-hero h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ds-hero p{color:var(--txt-mute);max-width:620px;margin-top:14px;font-size:15px}
+  .ds-sec{padding:52px 56px;border-bottom:1px solid var(--stroke)}
+  .ds-sec > h2{font-family:var(--f-head);font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:6px}
+  .ds-sec > .lead{font-family:var(--f-head);font-weight:700;font-size:26px;color:var(--head);margin-bottom:6px}
+  .ds-sec > .note{color:var(--txt-mute);font-size:14px;max-width:640px;margin-bottom:28px}
+  .ds-block{margin-top:30px}
+  .ds-block > h3{font-family:var(--f-ui);font-weight:600;font-size:13px;color:var(--txt-soft);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+  /* swatches */
+  .swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+  .swatch{border:1px solid var(--stroke);border-radius:10px;overflow:hidden;background:var(--card)}
+  .swatch .chip{height:72px}
+  .swatch .meta{padding:10px 12px;font-family:var(--f-ui)}
+  .swatch .nm{font-size:12.5px;color:var(--head);font-weight:600}
+  .swatch .hex{font-size:11.5px;color:var(--txt-mute);text-transform:uppercase;letter-spacing:.04em}
+  .grad-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grad-card{border:1px solid var(--stroke);border-radius:12px;overflow:hidden}
+  .grad-card .band{height:88px}
+  .grad-card .meta{padding:12px 14px;background:var(--card);font-family:var(--f-ui);font-size:12px;color:var(--txt-mute)}
+  .grad-card .meta b{color:var(--head);display:block;font-size:13px;margin-bottom:2px}
+  /* type specimen */
+  .type-row{display:flex;align-items:baseline;gap:20px;padding:14px 0;border-bottom:1px dashed var(--stroke)}
+  .type-row .lbl{width:130px;flex:none;font-family:var(--f-ui);font-size:11.5px;color:var(--txt-mute);text-transform:uppercase;letter-spacing:.08em}
+  .fonts-info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:8px}
+  .font-card{border:1px solid var(--stroke);border-radius:10px;padding:18px;background:var(--card)}
+  .font-card .big{font-size:34px;color:var(--head);line-height:1;margin-bottom:8px}
+  .font-card .fam{font-family:var(--f-ui);font-size:12px;color:var(--txt-mute)}
+  .font-card .use{font-family:var(--f-ui);font-size:11.5px;color:var(--txt-soft);margin-top:6px}
+  /* demo surface */
+  .demo{background:var(--bg);border:1px solid var(--stroke);border-radius:14px;padding:32px}
+  .row-wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  .tokens-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;font-family:var(--f-ui);font-size:12.5px}
+  .tok{border:1px solid var(--stroke);border-radius:8px;padding:10px 12px;background:var(--card)}
+  .tok b{color:var(--head);display:block}
+  .tok span{color:var(--txt-mute)}
+  code{font-family:'Space Grotesk',monospace;background:var(--card);border:1px solid var(--stroke);border-radius:5px;padding:2px 7px;font-size:12.5px;color:var(--cyan)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="ds-nav">
+  <div class="brand">START <span>Proposta</span></div>
+  <div class="sub">Design System</div>
+  <div class="grp">Fundamentos</div>
+  <a href="#cores">Cores</a>
+  <a href="#gradientes">Gradientes</a>
+  <a href="#tipografia">Tipografia</a>
+  <a href="#tokens">Tokens</a>
+  <div class="grp">Componentes</div>
+  <a href="#botoes">Botões</a>
+  <a href="#pilulas">Pílulas de estatística</a>
+  <a href="#titulos">Tags e títulos</a>
+  <a href="#servicos">Card de serviço</a>
+  <a href="#bonus">Card de bônus</a>
+  <a href="#investimento">Painel de investimento</a>
+  <a href="#info">Cards de informação</a>
+  <a href="#etapas">Etapas do processo</a>
+  <a href="#depoimentos">Depoimentos</a>
+  <div class="theme-toggle">
+    <button class="on" data-set="dark">Dark / Neon</button>
+    <button data-set="start">START claro</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="ds-main">
+  <header class="ds-hero">
+    <h1>Design System<br><span>START Proposta</span></h1>
+    <p>O sistema visual das propostas comerciais da START INC. Salve, reutilize e mantenha consistência em toda proposta — capa, escopo, bonificações, investimento e depoimentos. Alterne entre o tema dark/neon e o tema START claro no menu ao lado.</p>
+  </header>
+
+  <!-- CORES -->
+  <section class="ds-sec" id="cores">
+    <h2>Fundamentos</h2>
+    <div class="lead">Cores</div>
+    <div class="note">A base é escura e profunda; o brilho vem dos gradientes e do verde de destaque. Use os neutros para superfícies e texto, e reserve os vivos para ação e ênfase.</div>
+    <div class="ds-block">
+      <h3>Superfícies e traços</h3>
+      <div class="swatch-grid" id="swBase"></div>
+    </div>
+    <div class="ds-block">
+      <h3>Texto</h3>
+      <div class="swatch-grid" id="swText"></div>
+    </div>
+    <div class="ds-block">
+      <h3>Vivos e ação</h3>
+      <div class="swatch-grid" id="swAccent"></div>
+    </div>
+  </section>
+
+  <!-- GRADIENTES -->
+  <section class="ds-sec" id="gradientes">
+    <h2>Fundamentos</h2>
+    <div class="lead">Gradientes</div>
+    <div class="note">O gradiente quente (laranja→magenta) é a assinatura da marca na proposta. Aplicado em botões, títulos de destaque, números e o preço final.</div>
+    <div class="grad-row">
+      <div class="grad-card"><div class="band" style="background:linear-gradient(90deg,#ff7a00 0%,#ff00f5 100%)"></div><div class="meta"><b>Gradiente assinatura</b>linear-gradient(90deg, #ff7a00, #ff00f5)</div></div>
+      <div class="grad-card"><div class="band" style="background:radial-gradient(120% 130% at 82% -10%,#1c0b30 0%,#0a0f1f 46%,#01050c 100%)"></div><div class="meta"><b>Fundo do hero</b>radial-gradient em torno de #1c0b30 → #01050c</div></div>
+    </div>
+  </section>
+
+  <!-- TIPOGRAFIA -->
+  <section class="ds-sec" id="tipografia">
+    <h2>Fundamentos</h2>
+    <div class="lead">Tipografia</div>
+    <div class="note">Chakra Petch para títulos e corpo (técnica, com caráter). Space Grotesk para elementos de interface — valores, rótulos e botões.</div>
+    <div class="fonts-info">
+      <div class="font-card"><div class="big" style="font-family:'Chakra Petch'">Aa</div><div class="fam">Chakra Petch</div><div class="use">Títulos + corpo</div></div>
+      <div class="font-card"><div class="big" style="font-family:'Space Grotesk'">Aa</div><div class="fam">Space Grotesk</div><div class="use">UI: valores, rótulos, botões</div></div>
+      <div class="font-card"><div class="big" style="font-family:'Poppins'">Aa</div><div class="fam">Poppins / Rubik</div><div class="use">Tema START claro</div></div>
+    </div>
+    <div class="ds-block">
+      <div class="type-row"><div class="lbl">H1 / Hero · 700</div><div style="font-family:var(--f-head);font-weight:700;font-size:56px;line-height:1;color:var(--head);text-transform:uppercase">Olá, Cliente</div></div>
+      <div class="type-row"><div class="lbl">H2 / Seção · 700</div><div class="h2">Título de seção da proposta</div></div>
+      <div class="type-row"><div class="lbl">Título card · 700</div><div style="font-family:var(--f-head);font-weight:700;font-size:22px;color:var(--head)">Gestão de Tráfego Pago</div></div>
+      <div class="type-row"><div class="lbl">Corpo · 400</div><div style="font-family:var(--f-body);font-size:15.5px;color:var(--txt-soft);max-width:520px">Texto de apoio da proposta, usado em resumos e descrições de serviço.</div></div>
+      <div class="type-row"><div class="lbl">Rótulo UI · 600</div><div style="font-family:var(--f-ui);font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-mute)">Investimento</div></div>
+    </div>
+  </section>
+
+  <!-- TOKENS -->
+  <section class="ds-sec" id="tokens">
+    <h2>Fundamentos</h2>
+    <div class="lead">Tokens</div>
+    <div class="note">Todas as variáveis vivem em <code>proposta-start.css</code>. Trocar o atributo <code>data-theme</code> no <code>&lt;html&gt;</code> alterna entre dark e START claro.</div>
+    <div class="tokens-list">
+      <div class="tok"><b>--card-radius</b><span>12px (dark) · 10px (start)</span></div>
+      <div class="tok"><b>--btn-radius</b><span>6px (dark) · 30px (start)</span></div>
+      <div class="tok"><b>--f-head</b><span>Chakra Petch · Poppins</span></div>
+      <div class="tok"><b>--f-ui</b><span>Space Grotesk · Poppins</span></div>
+      <div class="tok"><b>--grad</b><span>gradiente assinatura</span></div>
+      <div class="tok"><b>--good</b><span>#2ee6a8 verde destaque</span></div>
+    </div>
+  </section>
+
+  <!-- BOTÕES -->
+  <section class="ds-sec" id="botoes">
+    <h2>Componentes</h2>
+    <div class="lead">Botões</div>
+    <div class="note">Um único botão de ação principal, sempre com o gradiente assinatura. Usado para "Ver informações", "Fechar proposta" e "Garantir oferta".</div>
+    <div class="demo row-wrap">
+      <a class="btn-hot" href="#botoes">Ver as informações ↓</a>
+      <a class="btn-hot" href="#botoes">Quero fechar esta proposta</a>
+      <a class="btn-hot" href="#botoes">Garantir esta oferta ↗</a>
+    </div>
+  </section>
+
+  <!-- PÍLULAS -->
+  <section class="ds-sec" id="pilulas">
+    <h2>Componentes</h2>
+    <div class="lead">Pílulas de estatística</div>
+    <div class="note">Prova social no hero. Ponto com gradiente + número. Máximo de 3.</div>
+    <div class="demo"><div class="hero-stats" style="justify-content:flex-start;padding:0">
+      <span class="stat-pill"><span class="dot"></span>+250 Clientes Atendidos</span>
+      <span class="stat-pill"><span class="dot"></span>Clientes em mais de 5 países</span>
+      <span class="stat-pill"><span class="dot"></span>+7 anos de mercado</span>
+    </div></div>
+  </section>
+
+  <!-- TAGS -->
+  <section class="ds-sec" id="titulos">
+    <h2>Componentes</h2>
+    <div class="lead">Tags e títulos de seção</div>
+    <div class="note">Toda seção abre com uma tag em gradiente (maiúsculas, espaçada) seguida do título em Chakra Petch.</div>
+    <div class="demo">
+      <div class="sec-head" style="margin:0 auto">
+        <span class="tag">Escopo</span>
+        <h2 class="h2">Os serviços incluídos na sua proposta</h2>
+        <p class="sub">Cada bloco detalha exatamente o que será entregue.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARD DE SERVIÇO -->
+  <section class="ds-sec" id="servicos">
+    <h2>Componentes</h2>
+    <div class="lead">Card de serviço</div>
+    <div class="note">Duas colunas: entregáveis à esquerda (lista com check verde), painel de investimento à direita.</div>
+    <div class="demo">
+      <div class="svc" style="margin:0">
+        <div>
+          <div class="svc-head"><h3>Gestão de Tráfego Pago STANDARD</h3></div>
+          <div class="resumo">Gestão profissional de Meta Ads e Google Ads para gerar demanda previsível.</div>
+          <ul>
+            <li>Planejamento estratégico das campanhas</li>
+            <li>Gestão de Meta Ads e Google Ads</li>
+            <li>Prospecção, relacionamento e remarketing</li>
+            <li>Monitoramento diário</li>
+            <li>Otimizações contínuas</li>
+            <li>Relatórios periódicos</li>
+          </ul>
+          <div class="prazo">Prazo: Contrato mensal</div>
+        </div>
+        <div class="svc-price">
+          <div class="svc-price-label">Investimento</div>
+          <div class="svc-price-value">R$ 3.500<span class="per">/mês</span></div>
+          <div class="svc-price-note">contrato recorrente</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARD DE BÔNUS -->
+  <section class="ds-sec" id="bonus">
+    <h2>Componentes</h2>
+    <div class="lead">Card de bônus</div>
+    <div class="note">Faixa de gradiente no topo, preço riscado "De → Por R$ 0" em verde. Comunica valor entregue sem custo.</div>
+    <div class="demo">
+      <div class="bonus-grid">
+        <div class="bonus-card">
+          <div class="bonus-price"><s>De R$ 1.750</s><b>Por R$ 0</b></div>
+          <h3>Setup de Plataforma</h3>
+          <div class="desc">Estrutura completa de anúncios configurada, testada e validada.</div>
+          <ul><li>Configuração do Meta Business</li><li>Conta de anúncios</li><li>WhatsApp Business</li><li>Até 45 públicos estratégicos</li></ul>
+        </div>
+        <div class="bonus-card">
+          <div class="bonus-price"><s>De R$ 3.500</s><b>Por R$ 0</b></div>
+          <h3>Tracking Completo</h3>
+          <div class="desc">Estrutura pronta para mensuração de leads, vendas e resultados.</div>
+          <ul><li>Google Tag Manager</li><li>Google Analytics 4</li><li>Meta Pixel + CAPI</li><li>Integração site + Meta + Google</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INVESTIMENTO -->
+  <section class="ds-sec" id="investimento">
+    <h2>Componentes</h2>
+    <div class="lead">Painel de investimento</div>
+    <div class="note">O clímax da proposta. Tabela de itens, preço "De → Por", preço gigante em gradiente, PIX com desconto e contagem regressiva de validade.</div>
+    <div class="demo" style="padding:0;background:none;border:none">
+      <div class="invest" style="margin:0 auto">
+        <span class="tag">Investimento</span>
+        <p class="lead" style="font-family:var(--f-head)">Considerando o pacote e as bonificações, fica assim:</p>
+        <table class="svc-table"><tbody>
+          <tr class="grp"><td colspan="2">Investimento único</td></tr>
+          <tr><td>Landing Page</td><td>R$ 2.000</td></tr>
+          <tr class="grp"><td colspan="2">Bonificações inclusas</td></tr>
+          <tr class="bonus-row"><td>Setup de Plataforma</td><td><s>R$ 1.750</s><b>R$ 0</b></td></tr>
+        </tbody></table>
+        <div class="price-de">De <s>R$ 3.750</s> por</div>
+        <div class="price-big">R$ 2.000<small></small></div>
+        <div class="price-pix">ou R$ 1.800 no PIX à vista (10% de desconto)</div>
+        <div class="valid-note">Estas condições são válidas por 7 dias.</div>
+        <div class="countdown">Expira em <b>6d 12h</b></div>
+        <a class="btn-hot" href="#investimento">Quero fechar esta proposta</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- INFO CARDS -->
+  <section class="ds-sec" id="info">
+    <h2>Componentes</h2>
+    <div class="lead">Cards de informação</div>
+    <div class="note">No painel claro. Número em gradiente, título e descrição — usados para prazo, formas e meios de pagamento.</div>
+    <div class="demo" style="background:var(--panel-bg);border:none">
+      <div class="info-card" style="margin-bottom:14px"><div class="info-num">01</div><h4>Prazo de Entrega</h4><p>Entrega em até 4 dias, podendo ser antes conforme o fluxo de demandas.</p></div>
+      <div class="info-card" style="margin-bottom:0"><div class="info-num">02</div><h4>Formas de Pagamento</h4><p>50% para iniciar o projeto e 50% na entrega.</p></div>
+    </div>
+  </section>
+
+  <!-- ETAPAS -->
+  <section class="ds-sec" id="etapas">
+    <h2>Componentes</h2>
+    <div class="lead">Etapas do processo</div>
+    <div class="note">Linha do tempo vertical com marcador em gradiente, número da etapa, título em gradiente e descrição.</div>
+    <div class="demo">
+      <div class="step"><div class="et">Etapa 01</div><h3>Diagnóstico e briefing</h3><p>Entendemos seu negócio, seus números e objetivos. Coletamos acessos, materiais e referências.</p></div>
+      <div class="step" style="padding-bottom:0"><div class="et">Etapa 02</div><h3>Estratégia</h3><p>Desenhamos o plano: canais, ofertas, funil e metas. Você aprova a direção antes da execução.</p></div>
+    </div>
+  </section>
+
+  <!-- DEPOIMENTOS -->
+  <section class="ds-sec" id="depoimentos">
+    <h2>Componentes</h2>
+    <div class="lead">Depoimentos</div>
+    <div class="note">Prova social real — prints de conversas de clientes, em mosaico. Use em propostas de <b>Landing Page</b> ou <b>Site</b>. Cada card leva o print + nome e @ do cliente. Estes são os seus depoimentos salvos:</div>
+    <div class="dep-masonry">
+      <div class="dep-card">
+        <div class="dep-shot"><img src="assets/depoimentos/telma-phone.png" alt="Depoimento Telma Oliveira"></div>
+        <div class="dep-who"><div class="av"><img src="assets/depoimentos/telma-phone.png" alt=""></div><div><div class="nm">Telma Oliveira</div><div class="hd">@brilhandonoseua</div></div></div>
+      </div>
+      <div class="dep-card">
+        <div class="dep-shot"><img src="assets/depoimentos/bomdia.jpg" alt="Depoimento"></div>
+        <div class="dep-who"><div><div class="nm">Cliente Start</div><div class="hd">Landing Page</div></div></div>
+      </div>
+      <div class="dep-card">
+        <div class="dep-shot"><img src="assets/depoimentos/luciano.jpg" alt="Depoimento Luciano"></div>
+        <div class="dep-who"><div><div class="nm">Luciano Pozzebom</div><div class="hd">@luccxxsxn</div></div></div>
+      </div>
+      <div class="dep-card">
+        <div class="dep-shot"><img src="assets/depoimentos/amanda.jpg" alt="Depoimento Amanda"></div>
+        <div class="dep-who"><div><div class="nm">Amanda Pinheiro</div><div class="hd">Cliente Start</div></div></div>
+      </div>
+      <div class="dep-card">
+        <div class="dep-shot"><img src="assets/depoimentos/jared.jpg" alt="Depoimento Jared"></div>
+        <div class="dep-who"><div><div class="nm">Jared Michael</div><div class="hd">Cliente internacional</div></div></div>
+      </div>
+      <div class="dep-card">
+        <div class="dep-shot"><img src="assets/depoimentos/telma-bubbles.jpg" alt="Depoimento"></div>
+        <div class="dep-who"><div><div class="nm">Telma Oliveira</div><div class="hd">@brilhandonoseua</div></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const SW = {
+    swBase:[['--bg / Fundo','#01050c'],['--bg-2 / Superfície','#070b13'],['--card / Card','#090e15'],['--card-2 / Painel','#040a18'],['--stroke / Traço','rgba(255,255,255,.08)']],
+    swText:[['--txt / Texto','#f1fcff'],['--txt-soft / Texto suave','#d9e9f2'],['--txt-mute / Texto apagado','#b8cce8'],['--head / Título','#f1fcff']],
+    swAccent:[['--accent / Laranja','#ff8a00'],['--accent2 / Magenta','#ff00f5'],['--cyan / Ciano','#00d1ff'],['--good / Verde','#2ee6a8']]
+  };
+  for(const [id,list] of Object.entries(SW)){
+    document.getElementById(id).innerHTML = list.map(([nm,hex])=>`
+      <div class="swatch"><div class="chip" style="background:${hex}"></div>
+      <div class="meta"><div class="nm">${nm}</div><div class="hex">${hex}</div></div></div>`).join('');
+  }
+  document.querySelectorAll('.theme-toggle button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.documentElement.setAttribute('data-theme', b.dataset.set);
+      document.querySelectorAll('.theme-toggle button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>

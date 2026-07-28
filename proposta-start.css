@@ -56,6 +56,10 @@ img{max-width:100%;display:block}
 .hero-copy h1 .l2{display:block;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(255,0,245,.3))}
 [data-theme="start"] .hero-copy h1 .l2{filter:none}
 .hero-copy p{margin:22px 0 30px;max-width:440px;color:rgba(255,255,255,.86);font-size:15.5px}
+.hero-author{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-8px 0 26px;font-family:var(--f-ui);font-size:14px;color:rgba(255,255,255,.9)}
+.hero-author .ha-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.hero-author b{color:#fff;font-weight:600}
+.hero-author .ha-role{color:rgba(255,255,255,.6)}
 .btn-hot{display:inline-flex;align-items:center;gap:10px;background:var(--grad);color:#fff;font-family:var(--f-ui);font-weight:600;font-size:15px;text-transform:uppercase;letter-spacing:.04em;padding:14px 28px;border-radius:var(--btn-radius);border:none;cursor:pointer;box-shadow:0 0 28px rgba(255,0,245,.3);transition:transform .25s ease,box-shadow .25s ease}
 [data-theme="start"] .btn-hot{box-shadow:0 10px 24px rgba(5,75,141,.3)}
 .btn-hot:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(255,0,245,.5);color:#fff}
@@ -107,13 +111,7 @@ img{max-width:100%;display:block}
 .bonus-total{margin-top:24px;display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px dashed var(--good);border-radius:var(--card-radius);padding:18px 26px;font-family:var(--f-head)}
 .bonus-total b{font-size:22px;color:var(--good)}
 
-/* depoimentos */
-.dep-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.dep-card{background:var(--card);border:1px solid var(--stroke);border-radius:var(--card-radius);padding:16px;display:flex;flex-direction:column;gap:14px}
-.dep-shot{aspect-ratio:1/1.25;border-radius:8px;overflow:hidden;background:var(--bg-2)}
-.dep-who{display:flex;align-items:center;gap:10px}
-.dep-who .nm{font-family:var(--f-ui);font-weight:600;font-size:14px;color:var(--head)}
-.dep-who .hd{font-size:12px;color:var(--txt-mute)}
+/* depoimentos: ver depoimentos.css (mosaico com prints reais) */
 
 /* sobre a start */
 .about{display:grid;grid-template-columns:440px 1fr;gap:64px;align-items:center}
@@ -172,7 +170,7 @@ img{max-width:100%;display:block}
 .doubt{margin-top:18px;font-family:var(--f-ui);font-size:14px;color:#d9e9f2}
 
 /* footer */
-footer{background:#000;color:rgba(255,255,255,.75);padding:30px 0;font-size:12.5px}
+footer{background:#000;color:rgba(255,255,255,.75);padding:30px 0;font-size:12.5px;margin-top:72px}
 [data-theme="start"] footer{background:#1D274E}
 .foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .foot img{height:26px}
@@ -186,12 +184,12 @@ footer{background:#000;color:rgba(255,255,255,.75);padding:30px 0;font-size:12.5
 .gate-card p{color:var(--txt-mute);font-size:14px;margin-bottom:22px}
 .gate-card input{width:100%;border:1px solid var(--stroke);border-radius:8px;padding:13px 14px;font-family:var(--f-ui);font-size:15px;background:var(--bg-2);color:var(--txt);outline:none;margin-bottom:14px;text-align:center}
 
-@media (max-width:900px){
+@media screen and (max-width:900px){
   .hero-inner{grid-template-columns:1fr}
   .svc{grid-template-columns:1fr}
   .svc ul{grid-template-columns:1fr}
   .bonus-grid{grid-template-columns:1fr}
-  .dep-grid{grid-template-columns:1fr 1fr}
+  .dep-masonry{columns:2}
   .about{grid-template-columns:1fr}
   .process{grid-template-columns:1fr;gap:40px}
   .process-left{position:static}
@@ -199,8 +197,19 @@ footer{background:#000;color:rgba(255,255,255,.75);padding:30px 0;font-size:12.5
   .info-card p{grid-column:1/-1}
   .invest{padding:36px 24px}
 }
+
+/* impressão / PDF — mantém o layout desktop exato */
+
+/* impressão / PDF — mantém o layout desktop exato */
 @media print{
-  .topbar,.countdown{display:none}
-  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .section{padding:44px 0}
+  @page{size:A4 portrait;margin:0}
+  html{width:1224px!important;zoom:.6487}
+  html,body{background:#01050c!important}
+  body{width:1224px!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .topbar,.countdown,.pdf-fab,.gate{display:none!important}
+  .section{padding:48px 0}
+  .hero{min-height:auto}
+  .step,.card,.svc-item,.info-card,.dep-card,.pf-item,.invest,.bonus-item,.bonus-total,.gate-card,.stat-pill{break-inside:avoid;page-break-inside:avoid}
+  img,image-slot{break-inside:avoid}
 }

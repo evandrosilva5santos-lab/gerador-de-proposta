@@ -172,7 +172,7 @@ function Card({
     onMouseEnter: () => hoverable && setHover(true),
     onMouseLeave: () => hoverable && setHover(false),
     style: {
-      background: '#fff',
+      background: 'var(--color-surface, #fff)',
       border: '1px solid var(--color-border)',
       borderRadius: 'var(--radius-lg)',
       padding: paddings[padding],

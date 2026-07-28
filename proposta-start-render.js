@@ -13,19 +13,27 @@
     {titulo:'Acompanhamento', texto:'Relatórios claros e reuniões estratégicas para você enxergar o retorno e decidir os próximos passos com segurança.'}
   ];
   const DEPOIMENTOS = [
-    {nome:'Cliente Start', hd:'Tráfego Pago'},
-    {nome:'Cliente Start', hd:'Landing Page'},
-    {nome:'Cliente Start', hd:'Setup completo'},
-    {nome:'Cliente Start', hd:'Site institucional'}
+    {img:'assets/depoimentos/telma-phone.png', nome:'Telma Oliveira', hd:'@brilhandonoseua'},
+    {img:'assets/depoimentos/bomdia.jpg', nome:'Cliente Start', hd:'Landing Page'},
+    {img:'assets/depoimentos/luciano.jpg', nome:'Luciano Pozzebom', hd:'@luccxxsxn'},
+    {img:'assets/depoimentos/amanda.jpg', nome:'Amanda Pinheiro', hd:'Cliente Start'},
+    {img:'assets/depoimentos/jared.jpg', nome:'Jared Michael', hd:'Cliente internacional'}
   ];
 
   function loadDb(){ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } }
   function saveDb(db){ localStorage.setItem(KEY, JSON.stringify(db)); }
 
+  function fromHash(){
+    try{
+      const m = location.hash.match(/[#&]p=([^&]+)/);
+      if(m) return JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,'+').replace(/_/g,'/')))));
+    }catch(e){ console.warn('link embutido inválido', e); }
+    return null;
+  }
   const params = new URLSearchParams(location.search);
   const pid = params.get('id');
   const db = loadDb();
-  let p = (db.propostas||[]).find(x=>x.id===pid);
+  let p = fromHash() || (db.propostas||[]).find(x=>x.id===pid);
   const isDemo = !p;
   if(!p){
     const seedSvc = (db.servicos&&db.servicos.length) ? db.servicos.slice(0,2) : [
@@ -55,8 +63,27 @@
     };
   }
 
+  // resolve refs de imagem guardadas no IndexedDB ("idb:<id>")
+  const IMG = v => (window.StartImg ? window.StartImg.src(v) : v) || '';
+  const PX = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+  const IMGSRC = v => IMG(v) || PX;
+  function applyImgs(){
+    const o = p.owner || {};
+    const hb = $('hero-bg');
+    if(o.heroImg && hb){ const u = IMG(o.heroImg); if(u) hb.style.background = `url('${u}') center 12% / cover no-repeat`; }
+    document.querySelectorAll('img[data-ref]').forEach(im => { const u = IMG(im.getAttribute('data-ref')); if(u) im.src = u; });
+  }
+
   document.documentElement.setAttribute('data-theme', p.template === 'start' ? 'start' : 'dark');
   document.title = `Proposta ${p.id} — ${p.cliente} · START INC.`;
+
+  // hero personalizado pelo autor (dono) da proposta
+  const owner = p.owner || {};
+  if(owner.heroImg){
+    const hb = $('hero-bg');
+    const u = IMG(owner.heroImg);
+    if(hb && u){ hb.style.background = `url('${u}') center 12% / cover no-repeat`; }
+  }
 
   const criado = new Date(p.criadoEm);
   const expiraDias = p.link && p.link.expiraDias;
@@ -64,7 +91,9 @@
   const linkExpirado = expiraDias ? (Date.now() > criado.getTime() + expiraDias*864e5) : false;
 
   const gate = $('gate'), page = $('page');
-  function show(){ gate.style.display='none'; page.style.display='block'; registrar(); render(); }
+  function show(){ gate.style.display='none'; page.style.display='block'; registrar(); render();
+    if(window.StartImg) window.StartImg.init().then(applyImgs).catch(()=>{});
+  }
 
   if(linkExpirado && !isDemo){
     gate.style.display='flex';
@@ -105,9 +134,17 @@
     $('hCliente').textContent = p.empresa || p.cliente;
     $('hIntro').textContent = `Olá${p.cliente?', '+p.cliente:''}! Preparamos esta proposta sob medida para o seu momento — role para ver escopo, bonificações e investimento.`;
     $('fAno').textContent = new Date().getFullYear();
+    // assinatura do autor no hero
+    const authorEl = $('hAuthor');
+    if(authorEl){
+      if(owner && owner.nome && owner.id !== 'start'){
+        authorEl.style.display = 'flex';
+        authorEl.innerHTML = `<span class="ha-label">Apresentado por</span><b>${esc(owner.nome)}</b>${owner.cargo?`<span class="ha-role">· ${esc(owner.cargo)}</span>`:''}`;
+      } else authorEl.style.display = 'none';
+    }
 
     // stats
-    $('statsBar').innerHTML = ['+250 Clientes Atendidos','Clientes em mais de 5 países','+4 anos de mercado']
+    $('statsBar').innerHTML = ['+250 Clientes Atendidos','Clientes em mais de 5 países','+7 anos de mercado']
       .map(s=>`<span class="stat-pill"><span class="dot"></span>${s}</span>`).join('');
 
     // objetivo
@@ -144,12 +181,19 @@
       $('bonusTotal').textContent = brl(beneficios);
     } else $('bonusSec').style.display='none';
 
-    // depoimentos (slots de print reutilizáveis)
-    $('depGrid').innerHTML = DEPOIMENTOS.map((t,i)=>`
-      <div class="dep-card">
-        <div class="dep-shot"><image-slot id="dep-shot-${i+1}" shape="rect" placeholder="Print do depoimento"></image-slot></div>
-        <div class="dep-who"><div><div class="nm">${esc(t.nome)}</div><div class="hd">${esc(t.hd)}</div></div></div>
-      </div>`).join('');
+    // depoimentos — vindos da proposta (puxados pelo tema); fallback para o conjunto padrão
+    const deps = (p.depoimentos && p.depoimentos.length)
+      ? p.depoimentos.map(t => ({ img: t.img, nome: t.nome, hd: t.handle || t.hd || '' }))
+      : DEPOIMENTOS;
+    const depSec = $('depGrid') ? $('depGrid').closest('.section') : null;
+    if(!deps.length){ if(depSec) depSec.style.display = 'none'; }
+    else {
+      $('depGrid').innerHTML = deps.map(t=>`
+        <div class="dep-card">
+          <div class="dep-shot"><img src="${IMGSRC(t.img)}" data-ref="${esc(t.img||'')}" alt="Depoimento ${esc(t.nome)}"></div>
+          <div class="dep-who"><div><div class="nm">${esc(t.nome)}</div><div class="hd">${esc(t.hd)}</div></div></div>
+        </div>`).join('');
+    }
 
     // etapas
     $('stepsCol').innerHTML = ETAPAS.map((e,i)=>`
@@ -169,7 +213,7 @@
       rows += unicos.map(s=>`<tr><td>${esc(s.nome)}</td><td>${brl(s.preco)}</td></tr>`).join('');
     }
     if(mensais.length){
-      rows += `<tr class="grp"><td colspan="2">Investimento mensal</td></tr>`;
+      rows += `<tr class="grp"><td colspan="2">Investimento mensal${Number(p.contratoMeses) ? ' · contrato de ' + p.contratoMeses + ' meses' : ''}</td></tr>`;
       rows += mensais.map(s=>`<tr><td>${esc(s.nome)}</td><td>${s.parcelas?esc(s.parcelas):brl(s.preco)+'/mês'}</td></tr>`).join('');
     }
     if((p.bonus||[]).length){
@@ -178,18 +222,30 @@
     }
     $('svcRows').innerHTML = rows;
 
-    // preço grande
-    const cheio = unico + beneficios;
-    if(unico){
+    // preço grande — total à vista do contrato, com opção de parcelamento
+    const meses = Number(p.contratoMeses) || 0;
+    const totalAvista = unico + mensal * (meses || 1);
+    const forma = p.pagamento || 'pix';
+    const pc = (function(total, forma){
+      const cartao = forma !== 'pix' && forma !== 'boleto';
+      const n = (forma === 'avista' || !cartao) ? 1 : (Number(forma) || 1);
+      const taxa = cartao ? ((n <= 3 ? 0.0299 : 0.0399) + 0.0249) : 0;
+      return { n: n, cartao: cartao, valor: Math.ceil(((total / n) * (1 + taxa) + (cartao ? 0.49 : 0)) * 100) / 100 };
+    })(totalAvista, forma);
+    const cheio = totalAvista + beneficios;
+    const money2 = v => 'R$ ' + Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    if(totalAvista > 0){
       $('priceDe').innerHTML = beneficios ? `De <s>${brl(cheio)}</s> por` : '';
-      $('priceBig').innerHTML = brl(unico).replace('R$ ','R$ ') + '<small></small>';
-      $('priceSub').textContent = mensal ? `+ ${brl(mensal)}/mês de gestão` : '';
-      $('pricePix').textContent = p.descontoPix ? `ou ${brl(Math.round(unico*0.9))} no PIX à vista (10% de desconto)` : '';
-    } else if(mensal){
-      $('priceDe').innerHTML = '';
-      $('priceBig').innerHTML = brl(mensal) + '<small>/mês</small>';
-      $('priceSub').textContent = beneficios ? `+ ${brl(beneficios)} em benefícios inclusos` : '';
-      $('pricePix').textContent = '';
+      if(pc.n > 1){
+        $('priceBig').innerHTML = pc.n + 'x <small>de</small> ' + money2(pc.valor);
+        $('priceSub').innerHTML = `TOTAL: <b>${brl(totalAvista)}</b> à vista` + (meses ? ` · contrato de ${meses} meses` : (mensal ? ' · equivale a 1 mês de gestão' : ''));
+      } else {
+        $('priceBig').innerHTML = brl(totalAvista) + '<small> à vista</small>';
+        $('priceSub').innerHTML = (mensal ? `${brl(mensal)}/mês` + (meses ? ` × ${meses} meses` : ' (equivale a 1 mês de gestão)') : '') + (unico && mensal ? ' + setup' : '');
+      }
+      $('pricePix').textContent = p.descontoPix && forma === 'pix'
+        ? `ou ${brl(Math.round(totalAvista*0.9))} no PIX à vista (10% de desconto)`
+        : (pc.cartao && pc.n === 1 ? `no cartão à vista: ${money2(pc.valor)}` : '');
     } else {
       $('priceDe').innerHTML = '';
       $('priceBig').textContent = 'Sob consulta';
@@ -207,10 +263,45 @@
       setTimeout(tick, 60e3);
     })();
 
+    window.__proposta = p;
+    window.__pdfAllowed = !(p.link && p.link.download === false);
     // impressão bloqueada (simulado)
     if(p.link && p.link.impressao === false){
       window.addEventListener('beforeprint', ()=>{ document.body.style.visibility='hidden'; });
       window.addEventListener('afterprint', ()=>{ document.body.style.visibility=''; });
     }
   }
+})();
+
+/* Botão "Baixar PDF" + impressão */
+(function(){
+  function initPdf(allowed){
+    if(allowed === false) return;
+    var st = document.createElement('style');
+    st.textContent = '.pdf-fab{position:fixed;right:20px;bottom:20px;z-index:9999;display:flex;align-items:center;gap:8px;padding:12px 20px;border:0;border-radius:999px;background:#111;color:#fff;font:600 14px/1 system-ui,-apple-system,sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.28)}.pdf-fab:hover{transform:translateY(-1px)}@media print{.pdf-fab{display:none!important}}';
+    document.head.appendChild(st);
+    var b = document.createElement('button');
+    b.className = 'pdf-fab';
+    b.innerHTML = '\u2193 Baixar PDF';
+    function doPrint(){
+      var imgs = Array.prototype.slice.call(document.images).filter(function(i){ return !i.complete; });
+      Promise.all(imgs.map(function(i){ return new Promise(function(r){ i.onload = i.onerror = r; }); }).concat([document.fonts && document.fonts.ready]))
+        .then(function(){ setTimeout(function(){ window.print(); }, 250); });
+    }
+    b.onclick = function(){
+      var pr = window.__proposta || {};
+      var nome = 'Proposta START' + (pr.cliente ? ' - ' + String(pr.cliente).replace(/[^\w\s-]/g,'') : '');
+      if(window.StartPDF) window.StartPDF.download(nome); else doPrint();
+    };
+    window.__doPrint = doPrint;
+    document.body.appendChild(b);
+    if(new URLSearchParams(location.search).get('print') === '1'){
+      setTimeout(function(){ if(window.StartPDF) window.StartPDF.download('Proposta START'); else doPrint(); }, 600);
+    }
+  }
+  window.__initPdfButton = initPdf;
+  document.addEventListener('DOMContentLoaded', function(){
+    const arrancar = () => setTimeout(function(){ if(!document.querySelector('.pdf-fab')) initPdf(window.__pdfAllowed); }, 600);
+    if(window.StartImg) window.StartImg.init().then(arrancar).catch(arrancar); else arrancar();
+  });
 })();
