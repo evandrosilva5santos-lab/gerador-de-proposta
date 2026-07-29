@@ -74,8 +74,11 @@ function PropostasPage({ db, update, highlight, go }) {
   const encode = (p) => btoa(unescape(encodeURIComponent(JSON.stringify(slim(p))))).replace(/\+/g, '-').replace(/\//g, '_');
   const slugOf = (p) => (p.slug || StartDB.makeSlug(p.cliente, p.empresa, db.propostas, p.id)).toLowerCase().replace(/[^a-z0-9-_]/g, '-');
   
-  const shortUrlFor = (p) => new URL(`${fileFor(p)}?p=${slugOf(p)}`, location.href).href;
-  const fullUrlFor = (p) => new URL(`${fileFor(p)}?p=${slugOf(p)}&id=${p.id}#p=${encode(p)}`, location.href).href;
+  const shortUrlFor = (p) => {
+    const route = p.template === 'completa' ? 'proposta' : 'p';
+    return new URL(`${route}/${slugOf(p)}`, location.origin).href;
+  };
+  const fullUrlFor = (p) => new URL(`${fileFor(p)}?p=${slugOf(p)}&id=${p.id}#p=${encode(p)}`, location.origin).href;
   const urlFor = (p) => (p.linkMode === 'full' ? fullUrlFor(p) : shortUrlFor(p));
 
   const syncApi = (p) => {
